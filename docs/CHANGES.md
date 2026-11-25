@@ -16,6 +16,8 @@ it: the last number for a fix, the middle one for something new.
 - Keys and places are named as each system names them (Ctrl+E, Show in File
   Explorer).
 - FFmpeg 9.0.2 everywhere.
+- Fixed on the Mac: a library folder reached through a link (or under
+  /var, /tmp) wasn't noticed changing.
 - Fixed: quitting while a track's loudness was being measured, or the
   library looked through, could crash the player.
 
