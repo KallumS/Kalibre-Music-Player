@@ -304,11 +304,18 @@ int Player::decode (float* out, int frames)
     const double rate = decodeRate;
     while (filled < frames && now)
     {
-        const int want = frames - filled;
+        int want = frames - filled;
         float* dst = out + (size_t) filled * 2;
 
         // Crossfade: the next begins this many seconds before this one ends.
         const double cross = crossfadeSeconds.load();
+        // Not past where it would begin until the window has said what's next (the buffer covers the wait).
+        if (cross > 0 && crossfadeAt < 0 && ! after && nextAsked && now->length > cross)
+        {
+            const double room = (now->length - cross) - now->decoder->position();
+            if (room <= 0) return filled;
+            want = std::min (want, std::max (1, (int) std::ceil (room * rate)));
+        }
         if (cross > 0 && crossfadeAt < 0 && after && now->length > 0)
         {
             const double remaining = now->length - now->decoder->position();

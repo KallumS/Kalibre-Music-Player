@@ -9,7 +9,7 @@ using namespace kp;
 namespace
 {
 // Plays through, answering "what's next" from a list, and returns all that was heard.
-std::vector<float> playThrough (Player& p, std::vector<Player::Item> items, int maxFrames)
+std::vector<float> playThrough (Player& p, std::vector<Player::Item> items, int maxFrames, int answerAfterMs = 0)
 {
     p.prepareForTest (48000, 512);
     p.play (items.front());
@@ -21,6 +21,7 @@ std::vector<float> playThrough (Player& p, std::vector<Player::Item> items, int 
     {
         for (auto& e : p.poll())
         {
+            if (e.kind == Player::Event::Kind::wantsNext && answerAfterMs > 0) juce::Thread::sleep (answerAfterMs);
             if (e.kind == Player::Event::Kind::wantsNext)
                 p.setNext (next < items.size() ? std::optional<Player::Item> (items[next++]) : std::nullopt);
             if (e.kind == Player::Event::Kind::ended) ended = true;
@@ -32,6 +33,7 @@ std::vector<float> playThrough (Player& p, std::vector<Player::Item> items, int 
             juce::Thread::sleep (1);
             for (auto& e : p.poll())
             {
+                if (e.kind == Player::Event::Kind::wantsNext && answerAfterMs > 0) juce::Thread::sleep (answerAfterMs);
                 if (e.kind == Player::Event::Kind::wantsNext)
                     p.setNext (next < items.size() ? std::optional<Player::Item> (items[next++]) : std::nullopt);
                 if (e.kind == Player::Event::Kind::ended) ended = true;
@@ -85,8 +87,8 @@ TEST ("player: crossfade overlaps the tracks")
     auto b = test::write ("xB.wav", test::fmt ("wav", 24), 48000, 48000, [] (int, int) { return 0.3f; });
     Player p;
     p.crossfadeSeconds = 0.5f;
-    auto heard = playThrough (p, { { a.getFullPathName().toStdString(), 1, 1.0 }, { b.getFullPathName().toStdString(), 2, 1.0 } }, 120000);
-    // 1 s + 1 s - 0.5 s overlapping.
+    auto heard = playThrough (p, { { a.getFullPathName().toStdString(), 1, 1.0 }, { b.getFullPathName().toStdString(), 2, 1.0 } }, 120000, 600);
+    // 1 s + 1 s - 0.5 s overlapping, even when what's next is said late (the decoder waits for it).
     int last = 0;
     for (int i = 0; i < (int) heard.size(); ++i) if (heard[(size_t) i] != 0.0f) last = i;
     CHECK (std::abs (last - 72000) < 1200);

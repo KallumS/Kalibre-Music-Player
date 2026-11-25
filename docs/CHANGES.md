@@ -3,6 +3,12 @@
 The version is in Kalibre Player > About Kalibre Player. Every change raises
 it: the last number for a fix, the middle one for something new.
 
+## 0.1.1 (25 November 2026)
+
+- Crossfade always lasts as long as it's set to: on a fast Mac the next
+  track's fade could start late, when the playlist answered after the
+  decoder had passed the point where it should begin.
+
 ## 0.1.0 (25 November 2026)
 
 The first Kalibre Player, made from Kalibre 1.1.0:
