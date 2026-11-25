@@ -50,6 +50,7 @@ foreach(opt ENABLE_OPENSSL ENABLE_MBEDTLS ENABLE_NETTLE ENABLE_LIBB2 ENABLE_LZ4 
             ENABLE_CPIO ENABLE_CAT ENABLE_UNZIP ENABLE_XATTR ENABLE_ACL ENABLE_TEST ENABLE_INSTALL)
     set(${opt} OFF CACHE BOOL "" FORCE)
 endforeach()
+set(POSIX_REGEX_LIB NONE CACHE STRING "" FORCE)   # patterns are for its own tools; Windows has no regex.h
 set(ENABLE_ZLIB ON CACHE BOOL "" FORCE)    # ZIP's deflate and gzip: the system's zlib
 set(ENABLE_ICONV ON CACHE BOOL "" FORCE)   # names in old ZIPs
 FetchContent_GetProperties(libarchive)
