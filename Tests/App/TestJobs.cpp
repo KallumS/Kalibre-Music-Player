@@ -21,7 +21,8 @@ TEST ("jobs: converting keeps the tags and names the file by the pattern")
         juce::File out;
         juce::String e;
         CHECK (convert (t, o, out, e));
-        CHECK_EQ (out.getRelativePathFrom (o.folder), juce::String ("AC_DC/Live/04 Song_.") + encodeFormat (id)->extension);
+        // Folders as the system writes them (\ on Windows).
+        CHECK_EQ (out.getRelativePathFrom (o.folder).replaceCharacter ('\\', '/'), juce::String ("AC_DC/Live/04 Song_.") + encodeFormat (id)->extension);
         Track back;
         CHECK (tagio::read (out.getFullPathName().toStdString(), back, e));
         CHECK_EQ (back.first ("title"), std::string ("Song?"));
