@@ -61,6 +61,7 @@ TEST ("player: gapless - the next track's first sample follows this one's last")
     auto heard = playThrough (p, { { a.getFullPathName().toStdString(), 1, 1.0 }, { b.getFullPathName().toStdString(), 2, 1.0 } }, 60000);
     // Every frame of both, in order, with nothing between.
     CHECK ((int) heard.size() >= 50000);
+    if (heard.size() < 50000) return;
     int jumps = 0;
     for (int i = 1; i < 50000; ++i)
         if (std::abs (heard[(size_t) i] - heard[(size_t) i - 1]) > 0.001f) ++jumps;
@@ -78,6 +79,7 @@ TEST ("player: ReplayGain's gain is applied per track")
     Player p;
     auto heard = playThrough (p, { { a.getFullPathName().toStdString(), 1, 0.5 } }, 12000);
     CHECK (heard.size() >= 10000);
+    if (heard.size() < 10000) return;
     CHECK (std::abs (heard[5000] - 0.2f) < 1e-4f);
 }
 
@@ -89,6 +91,8 @@ TEST ("player: crossfade overlaps the tracks")
     p.crossfadeSeconds = 0.5f;
     auto heard = playThrough (p, { { a.getFullPathName().toStdString(), 1, 1.0 }, { b.getFullPathName().toStdString(), 2, 1.0 } }, 120000, 600);
     // 1 s + 1 s - 0.5 s overlapping, even when what's next is said late (the decoder waits for it).
+    CHECK (heard.size() >= 72000);
+    if (heard.size() < 72000) return;
     int last = 0;
     for (int i = 0; i < (int) heard.size(); ++i) if (heard[(size_t) i] != 0.0f) last = i;
     CHECK (std::abs (last - 72000) < 1200);
@@ -125,6 +129,8 @@ TEST ("player: the equaliser at 0 dB and the volume at 0 dB leave the sound alon
     p.eq.enabled = true;
     p.eq.changed();
     auto heard = playThrough (p, { { a.getFullPathName().toStdString(), 1, 1.0 } }, 20480);
+    CHECK (heard.size() >= 20000);
+    if (heard.size() < 20000) return;
     double worst = 0;
     for (int i = 0; i < 20000; ++i) worst = std::max (worst, (double) std::abs (heard[(size_t) i] - test::sine (0, i, 48000.0)));
     CHECK (worst < 1e-4);

@@ -8,6 +8,9 @@ it: the last number for a fix, the middle one for something new.
 - Crossfade always lasts as long as it's set to: on a fast Mac the next
   track's fade could start late, when the playlist answered after the
   decoder had passed the point where it should begin.
+- The player counts as playing from the moment Play is pressed, not a
+  moment later when the file has opened (the window and add-ons could see
+  "stopped" in between).
 
 ## 0.1.0 (25 November 2026)
 

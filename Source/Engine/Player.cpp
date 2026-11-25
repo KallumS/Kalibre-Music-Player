@@ -43,6 +43,9 @@ void Player::send (Command c)
 void Player::play (const Item& item)
 {
     paused = false;
+    // Playing from the moment it's asked (the decoding thread says otherwise if the file won't open).
+    active = true;
+    endAt = -1;
     send ({ Command::Kind::play, item, 0 });
 }
 
@@ -55,6 +58,7 @@ void Player::setNext (std::optional<Item> item)
 void Player::stop()
 {
     paused = false;
+    active = false;
     send ({ Command::Kind::stop, {}, 0 });
 }
 
