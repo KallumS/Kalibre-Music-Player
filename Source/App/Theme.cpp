@@ -2,7 +2,7 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 
-namespace kal::theme
+namespace kp::theme
 {
 using namespace juce;
 
@@ -623,9 +623,9 @@ bool HouseButton::keyPressed (const KeyPress& key)
     return TextButton::keyPressed (key);
 }
 
-} // namespace kal::theme
+} // namespace kp::theme
 
-namespace kal::ui
+namespace kp::ui
 {
 static juce::Component::SafePointer<juce::Component> hostComponent, aboveQuestions;
 
@@ -717,4 +717,4 @@ void present (juce::AlertWindow* w, juce::ModalComponentManager::Callback* cb, b
             break;
         }
 }
-} // namespace kal::ui
+} // namespace kp::ui

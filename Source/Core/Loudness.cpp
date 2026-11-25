@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-namespace kal::loudness
+namespace kp::loudness
 {
 
 namespace
@@ -191,4 +191,4 @@ Measured measure (const float* left, const float* right, int samples, double sam
     return { meter.integrated(), meter.truePeakDb() };
 }
 
-} // namespace kal::loudness
+} // namespace kp::loudness

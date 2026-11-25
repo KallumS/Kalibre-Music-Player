@@ -1,6 +1,6 @@
 #include "FilePanels.h"
 
-namespace kal::ui
+namespace kp::ui
 {
 void placeFilePanelsAtTop() {}
-} // namespace kal::ui
+} // namespace kp::ui

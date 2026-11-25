@@ -10,8 +10,8 @@
 
 #pragma once
 
-namespace kal::ui
+namespace kp::ui
 {
 // Called once when Kalibre starts: from then on, every Open and Save panel is placed so.
 void placeFilePanelsAtTop();
-} // namespace kal::ui
+} // namespace kp::ui

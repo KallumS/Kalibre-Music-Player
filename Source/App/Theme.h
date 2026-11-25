@@ -27,7 +27,7 @@
 
 #include "Platform.h"
 
-namespace kal::ui
+namespace kp::ui
 {
 // The words of the system Kalibre runs on (decision 0129): Option-click or
 // Alt+click, the Finder or File Explorer, this Mac or this PC.
@@ -44,9 +44,9 @@ inline juce::String number (double v, int places)
 {
     return places <= 0 ? juce::String (juce::roundToInt (v)) : juce::String (v, places);
 }
-} // namespace kal::ui
+} // namespace kp::ui
 
-namespace kal::theme
+namespace kp::theme
 {
 using juce::Colour;
 
@@ -228,9 +228,9 @@ private:
     bool byKeyboard = false;   // the focus came by Tab
 };
 
-} // namespace kal::theme
+} // namespace kp::theme
 
-namespace kal::ui
+namespace kp::ui
 {
 // Small questions (a tempo, a name) are asked inside the main window, over
 // it, never in a window of their own (decision 0002). The main component
@@ -242,4 +242,4 @@ juce::Component* host();
 void present (juce::AlertWindow*, juce::ModalComponentManager::Callback*, bool deleteWhenDismissed);
 void setQuestionsBelow (juce::Component*);
 juce::Rectangle<int> questionBounds (juce::Rectangle<int> host, juce::Rectangle<int> above, juce::Rectangle<int> question);
-} // namespace kal::ui
+} // namespace kp::ui

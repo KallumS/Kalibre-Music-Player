@@ -24,7 +24,7 @@
 #include <cstdint>
 #include <vector>
 
-namespace kal::loudness
+namespace kp::loudness
 {
 
 inline constexpr double silence = -100.0;
@@ -86,4 +86,4 @@ inline double toLufs (double meanSquareSum) { return meanSquareSum > 0 ? -0.691 
 struct Measured { double integrated = silence, truePeak = silence; };
 Measured measure (const float* left, const float* right, int samples, double sampleRate);
 
-} // namespace kal::loudness
+} // namespace kp::loudness

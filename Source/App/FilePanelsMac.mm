@@ -3,7 +3,7 @@
 #import <AppKit/AppKit.h>
 #import <objc/runtime.h>
 
-namespace kal::ui
+namespace kp::ui
 {
 namespace
 {
@@ -42,4 +42,4 @@ void placeFilePanelsAtTop()
                                                            queue: [NSOperationQueue mainQueue]
                                                       usingBlock: ^(NSNotification* n) { place ((NSWindow*) [n object]); }];
 }
-} // namespace kal::ui
+} // namespace kp::ui

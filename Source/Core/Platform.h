@@ -15,7 +15,7 @@
 
 #include <string>
 
-namespace kal::platform
+namespace kp::platform
 {
 
 #if defined (_WIN32)
@@ -40,7 +40,7 @@ struct Words
     const char* settingsMenu;    // the same in a sentence: "the Kalibre menu" / "File > Settings"
 };
 
-inline constexpr Words mac { "Option", "Command", "Control", "-", "Return", "the Finder", "Show in Finder", "the Trash", "Mac", "Terminal", "Kalibre", "the Kalibre menu" };
+inline constexpr Words mac { "Option", "Command", "Control", "-", "Return", "the Finder", "Show in Finder", "the Trash", "Mac", "Terminal", "Kalibre Player", "the Kalibre Player menu" };
 inline constexpr Words pc  { "Alt", "Ctrl", "Ctrl", "+", "Enter", "File Explorer", "Show in File Explorer", "the Recycle Bin", "PC", "PowerShell", "File > Settings", "File > Settings" };
 
 inline const Words& words() { return windows ? pc : mac; }
@@ -52,4 +52,4 @@ inline std::string commandKey (const std::string& what, const Words& w = words()
 // "Kalibre > Plug-in Manager" / "File > Settings > Plug-in Manager".
 inline std::string inSettings (const std::string& item, const Words& w = words()) { return std::string (w.settings) + " > " + item; }
 
-} // namespace kal::platform
+} // namespace kp::platform
