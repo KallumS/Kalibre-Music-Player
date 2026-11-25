@@ -143,7 +143,8 @@ jobs:
         run: choco install ninja --no-progress -y
       # FFmpeg (with LAME and libopus) and zlib from vcpkg at a fixed release (decision 0020);
       # what vcpkg builds is kept between runs.
-      - uses: actions/cache@v4
+      - uses: actions/cache/restore@v4
+        id: vcpkg-cache
         with:
           path: C:\kp-vcpkg-cache
           key: vcpkg-${{ env.VCPKG_TAG }}-x64-windows-static-ffmpeg-lame-opus-zlib-v1
@@ -155,6 +156,12 @@ jobs:
           New-Item -ItemType Directory -Force -Path $env:VCPKG_DEFAULT_BINARY_CACHE | Out-Null
           & "$env:KP_VCPKG\vcpkg.exe" install "ffmpeg[core,avcodec,avformat,swresample,mp3lame,opus]:x64-windows-static" "zlib:x64-windows-static" --clean-after-build
           if ($LASTEXITCODE -ne 0) { Get-ChildItem "$env:KP_VCPKG\buildtrees\ffmpeg\*.log" -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "== $_"; Get-Content $_ -Tail 60 }; exit 1 }
+      # Kept straight away, so a later step failing doesn't cost the next run the FFmpeg build.
+      - uses: actions/cache/save@v4
+        if: steps.vcpkg-cache.outputs.cache-hit != 'true'
+        with:
+          path: C:\kp-vcpkg-cache
+          key: vcpkg-${{ env.VCPKG_TAG }}-x64-windows-static-ffmpeg-lame-opus-zlib-v1
       - name: Configure
         run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_TOOLCHAIN_FILE=C:/kp-vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-static
       - name: Build
