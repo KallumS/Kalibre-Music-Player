@@ -429,9 +429,7 @@ bool MainComponent::perform (const InvocationInfo& info)
             if (discs.empty()) { c.say ("There's no audio CD in the drive.", true); return true; }
             if (info.commandID == cmd::ripCd) { dialogs::rip (ctx, discs.front()); return true; }
             const int p = c.newPlaylist (discs.front().name());
-            std::vector<std::string> locs;
-            for (auto& f : discs.front().tracks) locs.push_back (f.getFullPathName().toStdString());
-            c.addLocations (p, locs);
+            c.addLocations (p, discs.front().tracks);
             c.playItem (p, 0);
             return true;
         }
@@ -527,7 +525,7 @@ bool MainComponent::perform (const InvocationInfo& info)
 
         case cmd::editLayout:
             view.setEditing (! view.editing());
-            c.say (view.editing() ? "Editing the layout: click Change on any panel. Command-E again when it's done." : String ("The layout is kept."));
+            c.say (view.editing() ? "Editing the layout: click Change on any panel. " + ui::commandKey ("E") + " again when it's done." : String ("The layout is kept."));
             commands.commandStatusChanged();
             return true;
         case cmd::miniPlayer: setMini (! miniMode); return true;

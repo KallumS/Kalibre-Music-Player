@@ -1,5 +1,8 @@
 # Kalibre Player: the guide
 
+The keys are written as a Mac has them. On Windows and Linux, Command is
+Ctrl (Ctrl+O, Ctrl+Shift+M), and Preferences is in the File menu.
+
 ![The window](guide/library-and-playlist.png)
 
 ## The window

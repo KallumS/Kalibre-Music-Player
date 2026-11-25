@@ -8,7 +8,7 @@ only on the Mac by hand (no test can reach it from Linux); ⬜ not yet.
 | | |
 |---|---|
 | ✅ MP1, MP2, MP3, Musepack, AAC, WMA, Ogg Vorbis, FLAC, Ogg FLAC, ALAC, WavPack, WAV, AIFF, AU, SND, Speex, Opus | FFmpeg's decoders, built in (`tools/build-ffmpeg.sh`). Tests: every decoder is present; each format the converter writes decodes back (lossless exactly); AU/SND written by hand play. Also Monkey's Audio, TTA, TAK, AC-3, E-AC-3, DTS, TrueHD, DSD, MKA, CAF. |
-| 🟡 Audio CD | macOS mounts a CD as AIFF files with a .TOC.plist; File > Play Audio CD plays them. The TOC parser and MusicBrainz disc ID are tested (MusicBrainz's own example). |
+| 🟡 Audio CD | macOS mounts a CD as AIFF files with a .TOC.plist; Windows and Linux are read from the drive (raw sectors as a WAV stream, tested with a stand-in drive). File > Play Audio CD. The TOC parsers and MusicBrainz disc ID are tested (MusicBrainz's own example). |
 | ✅ ZIP, GZIP, RAR | libarchive (also 7-Zip and tar). Tests: a ZIP's tracks listed, tagged, decoded; a .gz; libarchive's own RAR test file. Archives are read-only (tags can't be written inside them). |
 | ✅ Gapless | The next track is opened ahead and joined sample to sample; FFmpeg cuts encoder padding. Test: two ramps join with no jump. |
 | ✅ ReplayGain | Track, album, smart; preamps; clipping prevention; tracks without tags measured on the fly (EBU R128, -18 LUFS). Scanner writes tags by track or album. Tests: R128 against EBU's sine, album gating, tag reading, gains applied in playback. |
@@ -38,10 +38,19 @@ only on the Mac by hand (no test can reach it from Linux); ⬜ not yet.
 | ✅ Keyboard shortcuts | Every command, changed in Preferences, kept. |
 | ✅ Lua add-ons | Events, menus, timers, playback, library, playlists, tags, settings; imported from .lua, folders or .zip; stopped if they run away. Tested against a fake and the real controller; four examples. |
 
+## Systems
+
+| | |
+|---|---|
+| ✅ Mac (Apple silicon) | The first; built and tested on CI. |
+| ✅ Windows (64-bit) | Built and tested on CI (MSVC, FFmpeg from vcpkg). CDs read from the drive, folders watched with ReadDirectoryChangesW, media keys as hot keys: 🟡. |
+| ✅ Linux (64-bit) | Built and tested on CI; a .tar.gz with an installer. CDs read from the drive (🟡); folders watched with inotify (tested). |
+
 ## Not yet
 
 - ⬜ Signing with an Apple Developer ID (first launch needs right-click > Open).
 - ⬜ Crossfade on manual track changes (they cut cleanly).
 - ⬜ Writing tags inside archives (they're read-only).
-- ⬜ Windows builds (Kalibre has them; the player's CI builds the Mac only for now).
+- ⬜ Media keys on Linux (MPRIS, through D-Bus).
+- ⬜ Signing on Windows (SmartScreen asks once).
 - ⬜ Accurate-rip verification when ripping CDs.

@@ -15,6 +15,8 @@
 #include <juce_events/juce_events.h>
 
 #include <functional>
+#include <atomic>
+#include <memory>
 #include <mutex>
 #include <unordered_map>
 
@@ -47,6 +49,7 @@ private:
     juce::StringArray folders;
     std::unordered_map<std::string, Known> known;
     std::mutex lock;
+    std::shared_ptr<std::atomic<bool>> alive = std::make_shared<std::atomic<bool>> (true);
     void run() override;
     void deliver (Batch);
 };

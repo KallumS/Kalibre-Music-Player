@@ -210,9 +210,9 @@ class RipDialog : public Component, private TableListBoxModel
 public:
     RipDialog (Context& x, AudioCdDisc d) : ctx (x), disc (std::move (d)), options (x.c)
     {
-        album.trackTitles.resize ((size_t) disc.tracks.size());
-        album.trackArtists.resize ((size_t) disc.tracks.size());
-        for (int k = 0; k < disc.tracks.size(); ++k) album.trackTitles[(size_t) k] = "Track " + std::to_string (k + 1);
+        album.trackTitles.resize (disc.tracks.size());
+        album.trackArtists.resize (disc.tracks.size());
+        for (int k = 0; k < (int) disc.tracks.size(); ++k) album.trackTitles[(size_t) k] = "Track " + std::to_string (k + 1);
         album.title = disc.name().toStdString();
         for (auto* e : { &artist, &title, &date }) { addAndMakeVisible (e); e->onTextChange = [this] { fromFields(); }; }
         addAndMakeVisible (options);
@@ -297,8 +297,8 @@ private:
                 if (! *a) return;
                 if (found.empty()) { status.setText ("Not found (" + error + "): name the tracks here.", dontSendNotification); return; }
                 album = found.front();
-                album.trackTitles.resize ((size_t) disc.tracks.size());
-                album.trackArtists.resize ((size_t) disc.tracks.size());
+                album.trackTitles.resize (disc.tracks.size());
+                album.trackArtists.resize (disc.tracks.size());
                 status.setText ("Found on MusicBrainz" + String (found.size() > 1 ? " (the first of " + String ((int) found.size()) + " releases)" : "") + ".",
                                 dontSendNotification);
                 toFields();
@@ -306,7 +306,7 @@ private:
         });
     }
 
-    int getNumRows() override { return disc.tracks.size(); }
+    int getNumRows() override { return (int) disc.tracks.size(); }
     void paintRowBackground (Graphics& g, int row, int, int, bool selected) override { if (selected) g.fillAll (theme::raised); else if (row % 2) g.fillAll (theme::lane); }
     void paintCell (Graphics& g, int row, int col, int w, int h, bool) override
     {
@@ -339,11 +339,11 @@ private:
         fromFields();
         options.remember();
         std::vector<Track> tracks;
-        for (int k = 0; k < disc.tracks.size(); ++k)
+        for (int k = 0; k < (int) disc.tracks.size(); ++k)
         {
             Track t;
-            t.location = disc.tracks[k].getFullPathName().toStdString();
-            t.tags = cd::tagsFor (album, k, disc.tracks.size());
+            t.location = disc.tracks[(size_t) k];
+            t.tags = cd::tagsFor (album, k, (int) disc.tracks.size());
             tracks.push_back (std::move (t));
         }
         runConversion (ctx, std::move (tracks), options.options(), "Ripping " + u8 (album.title));

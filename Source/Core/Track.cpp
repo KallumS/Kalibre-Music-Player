@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <cctype>
 #include <cmath>
+#include <cstdio>
+#include <cstdlib>
 
 namespace kp
 {
@@ -108,6 +110,14 @@ static std::string_view lastPart (std::string_view p)
 
 std::string fileName (std::string_view l)
 {
+    // A CD track ("cdda:D:|3") reads as the WAV it's made into.
+    if (l.substr (0, 5) == "cdda:")
+    {
+        const auto bar = l.find_last_of ('|');
+        char buf[32];
+        std::snprintf (buf, sizeof buf, "Track %02d.wav", bar == std::string_view::npos ? 0 : std::atoi (std::string (l.substr (bar + 1)).c_str()));
+        return buf;
+    }
     if (auto s = split (l)) return std::string (lastPart (s->second));
     return std::string (lastPart (l));
 }

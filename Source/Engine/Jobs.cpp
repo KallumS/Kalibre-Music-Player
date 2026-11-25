@@ -14,7 +14,9 @@ juce::File convertTarget (const Track& t, const ConvertOptions& o)
     const auto* f = encodeFormat (o.encode.format);
     auto rel = tf::formatPath (o.pattern, t);
     if (rel.empty()) rel = tf::safeFileName (tf::format ("%filename%", t));
-    return o.folder.getChildFile (juce::String::fromUTF8 (rel.c_str()) + "." + (f ? f->extension : std::string ("flac")));
+    // The pattern's folders with this system's separator.
+    const auto relative = juce::String::fromUTF8 (rel.c_str()).replaceCharacter ('/', juce::File::getSeparatorChar());
+    return o.folder.getChildFile (relative + "." + (f ? f->extension : std::string ("flac")));
 }
 
 bool convert (const Track& t, const ConvertOptions& o, juce::File& out, juce::String& error, const std::atomic<bool>* cancel)
@@ -131,7 +133,7 @@ Jobs::Jobs() : pool (juce::ThreadPoolOptions().withThreadName ("Kalibre Player j
                          .withNumberOfThreads (std::max (2, juce::SystemStats::getNumCpus() - 1))
                          .withDesiredThreadPriority (juce::Thread::Priority::low)) {}
 
-Jobs::~Jobs() { cancelAll(); pool.removeAllJobs (true, 20000); }
+Jobs::~Jobs() { *alive = false; cancelAll(); pool.removeAllJobs (true, 20000); }
 
 void Jobs::cancelAll()
 {
@@ -158,7 +160,7 @@ std::shared_ptr<Job> Jobs::run (const juce::String& title, int count, std::funct
     if (count == 0)
     {
         job->finished = true;
-        juce::MessageManager::callAsync ([job, finish] { if (finish) finish (*job); });
+        juce::MessageManager::callAsync ([job, finish, a = alive] { if (*a && finish) finish (*job); });
         return job;
     }
     // Items are taken in turn by as many workers as asked (all the cores by default).
@@ -167,7 +169,7 @@ std::shared_ptr<Job> Jobs::run (const juce::String& title, int count, std::funct
     const int workers = std::max (1, std::min (count, threads > 0 ? threads : pool.getNumThreads()));
     *workersLeft = workers;
     for (int w = 0; w < workers; ++w)
-        pool.addJob ([job, next, workersLeft, work, finish, count]
+        pool.addJob ([job, next, workersLeft, work, finish, count, a = alive]
         {
             for (;;)
             {
@@ -177,7 +179,7 @@ std::shared_ptr<Job> Jobs::run (const juce::String& title, int count, std::funct
                 ++job->done;
             }
             if (--(*workersLeft) == 0)
-                juce::MessageManager::callAsync ([job, finish] { job->finished = true; if (finish) finish (*job); });
+                juce::MessageManager::callAsync ([job, finish, a] { job->finished = true; if (*a && finish) finish (*job); });
         });
     return job;
 }

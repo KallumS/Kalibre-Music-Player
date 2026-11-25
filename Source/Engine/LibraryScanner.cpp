@@ -8,7 +8,7 @@ namespace kp
 {
 
 LibraryScanner::LibraryScanner() : juce::Thread ("Kalibre Player library") {}
-LibraryScanner::~LibraryScanner() { cancel(); }
+LibraryScanner::~LibraryScanner() { *alive = false; cancel(); }
 
 void LibraryScanner::cancel()
 {
@@ -26,7 +26,7 @@ void LibraryScanner::scan (const juce::StringArray& f, std::unordered_map<std::s
 
 void LibraryScanner::deliver (Batch b)
 {
-    juce::MessageManager::callAsync ([this, b = std::move (b)]() mutable { if (onBatch) onBatch (std::move (b)); });
+    juce::MessageManager::callAsync ([this, a = alive, b = std::move (b)]() mutable { if (*a && onBatch) onBatch (std::move (b)); });
 }
 
 void LibraryScanner::run()
@@ -94,9 +94,12 @@ void LibraryScanner::run()
     for (auto& [loc, k] : known)
     {
         if (seen.count (loc)) continue;
-        const auto container = juce::String (location::container (loc));
-        for (auto& folder : folders)
+        const auto container = juce::String::fromUTF8 (location::container (loc).c_str()).replaceCharacter ('\\', '/');
+        for (auto& f : folders)
+        {
+            auto folder = f.replaceCharacter ('\\', '/');
             if (container.startsWith (folder.endsWithChar ('/') ? folder : folder + "/")) { batch.gone.push_back (loc); break; }
+        }
     }
     batch.finished = true;
     batch.status = {};

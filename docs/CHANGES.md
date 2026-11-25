@@ -3,6 +3,22 @@
 The version is in Kalibre Player > About Kalibre Player. Every change raises
 it: the last number for a fix, the middle one for something new.
 
+## 0.3.0 (25 November 2026)
+
+- Kalibre Player for Windows (a .zip: KalibrePlayer-Windows) and Linux (a
+  .tar.gz with an installer: KalibrePlayer-Linux), from the same code as
+  the Mac's.
+- Audio CDs on Windows and Linux are read straight from the drive, played
+  and ripped as on the Mac.
+- The library's folders are watched on Windows and Linux as on the Mac: a
+  change is noticed within seconds.
+- The keyboard's media keys on Windows, even when the player isn't in front.
+- Keys and places are named as each system names them (Ctrl+E, Show in File
+  Explorer).
+- FFmpeg 9.0.2 everywhere.
+- Fixed: quitting while a track's loudness was being measured, or the
+  library looked through, could crash the player.
+
 ## 0.2.0 (25 November 2026)
 
 - The mini player: View > Mini Player (Command-Shift-M) makes the window a

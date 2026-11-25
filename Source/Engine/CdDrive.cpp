@@ -1,4 +1,5 @@
 #include "CdDrive.h"
+#include "CdRom.h"
 
 namespace kp
 {
@@ -57,18 +58,31 @@ std::optional<cd::Toc> parseTocPlist (const juce::String& text)
 std::vector<AudioCdDisc> findAudioCds (const juce::File& volumes)
 {
     std::vector<AudioCdDisc> out;
+    // Mounted as files (the Mac).
     for (auto& v : volumes.findChildFiles (juce::File::findDirectories, false))
     {
         auto plist = v.getChildFile (".TOC.plist");
         if (! plist.existsAsFile()) continue;
         AudioCdDisc d;
-        d.volume = v;
-        for (auto& f : v.findChildFiles (juce::File::findFiles, false, "*.aiff;*.aif;*.AIFF"))
-            if (! f.getFileName().startsWithChar ('.')) d.tracks.add (f);
-        std::sort (d.tracks.begin(), d.tracks.end(), [] (const juce::File& a, const juce::File& b)
+        d.label = v.getFileName();
+        auto files = v.findChildFiles (juce::File::findFiles, false, "*.aiff;*.aif;*.AIFF");
+        std::sort (files.begin(), files.end(), [] (const juce::File& a, const juce::File& b)
                    { return a.getFileName().getIntValue() < b.getFileName().getIntValue(); });
+        for (auto& f : files) if (! f.getFileName().startsWithChar ('.')) d.tracks.push_back (f.getFullPathName().toStdString());
         if (auto toc = parseTocPlist (plist.loadFileAsString())) d.toc = *toc;
-        if (! d.tracks.isEmpty()) out.push_back (std::move (d));
+        if (! d.tracks.empty()) out.push_back (std::move (d));
+    }
+    // Read from the drive (Windows, Linux).
+    for (auto& drive : cdrom::drives())
+    {
+        juce::String error;
+        auto disc = cdrom::readToc (drive.device, error);
+        if (! disc) continue;
+        AudioCdDisc d;
+        d.label = "Audio CD (" + juce::String (drive.name) + ")";
+        d.toc = disc->toc;
+        for (int k = 0; k < (int) disc->firstLba.size(); ++k) d.tracks.push_back (cdrom::location (drive.device, disc->toc.firstTrack + k));
+        out.push_back (std::move (d));
     }
     return out;
 }

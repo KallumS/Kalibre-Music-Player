@@ -1,6 +1,6 @@
 # Kalibre Player
 
-A music player for Apple silicon Macs, made from [Kalibre](https://github.com/KallumS/Kalibre)
+A music player for Apple silicon Macs, Windows and Linux, made from [Kalibre](https://github.com/KallumS/Kalibre)
 (the DAW): its look, its themes, its loudness meter and its Lua, around a
 player in the spirit of foobar2000 and VLC. Everything happens in one window,
 laid out as you like.
@@ -26,8 +26,8 @@ laid out as you like.
   and **AU and VST3 effects** in a chain.
 - **Meters**: oscilloscope, goniometer with correlation, spectrum, peak and
   RMS meter, and an EBU R128 loudness meter.
-- Play/pause, next and previous on the keyboard's media keys, AirPods and
-  Control Centre.
+- Play/pause, next and previous on the keyboard's media keys (Mac and
+  Windows), AirPods and Control Centre.
 
 **Library, tags and files**
 - **A library that watches its folders**: what's added, changed or removed
@@ -58,10 +58,15 @@ laid out as you like.
 
 ## Getting it
 
-From [Actions](../../actions) > Build > the latest run > **KalibrePlayer-macOS**,
-or a release. Open the .dmg, drag Kalibre Player to Applications, and the
-first time right-click it and choose Open. [docs/INSTALL-MAC.txt](docs/INSTALL-MAC.txt)
-has the rest.
+From [Actions](../../actions) > Build > the latest run, or a release:
+
+- **Mac** (Apple silicon): **KalibrePlayer-macOS**. Open the .dmg, drag
+  Kalibre Player to Applications, and the first time right-click it and
+  choose Open. [docs/INSTALL-MAC.txt](docs/INSTALL-MAC.txt)
+- **Windows** (10 and 11, 64-bit): **KalibrePlayer-Windows**. Unzip it and
+  run Kalibre Player.exe. [docs/INSTALL-WINDOWS.txt](docs/INSTALL-WINDOWS.txt)
+- **Linux** (64-bit; Ubuntu 24.04, Fedora 40 or newer): **KalibrePlayer-Linux**.
+  Unpack it and run install.sh. [docs/INSTALL-LINUX.txt](docs/INSTALL-LINUX.txt)
 
 ## Building it
 

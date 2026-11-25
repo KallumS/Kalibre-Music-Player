@@ -81,3 +81,15 @@ TEST ("jobs: run in parallel and say when they're done")
     CHECK (test::waitFor ([&] { return stopped; }));
     CHECK (slow->done.load() < 1000);
 }
+
+TEST ("jobs: what's left to say when a job ends is dropped once its owner is gone")
+{
+    bool said = false;
+    {
+        Jobs jobs;
+        jobs.run ("Quick", 1, [] (int, Job&) {}, [&] (Job&) { said = true; });
+        juce::Thread::sleep (200);   // done on the pool; its finish waits for the message loop
+    }
+    test::waitFor ([] { return false; }, 300);
+    CHECK (! said);
+}

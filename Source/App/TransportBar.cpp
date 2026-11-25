@@ -97,7 +97,7 @@ TransportBar::TransportBar (Context& x) : ctx (x), seek (x.c)
     volume.setRange (-60.0, 0.0, 0.5);
     volume.setSkewFactorFromMidPoint (-12.0);
     volume.setValue (ctx.c.volume(), dontSendNotification);
-    volume.setTooltip ("Volume (Command-Up, Command-Down)");
+    volume.setTooltip ("Volume (" + ui::commandKey ("Up") + ", " + ui::commandKey ("Down") + ")");
     volume.onValueChange = [this] { ctx.c.setVolume (volume.getValue()); };
     volume.setDoubleClickReturnValue (true, 0.0);
     addAndMakeVisible (volume);

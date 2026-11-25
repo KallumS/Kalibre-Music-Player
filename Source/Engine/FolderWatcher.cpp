@@ -8,9 +8,11 @@ juce::StringArray foldersHolding (const juce::StringArray& watched, const juce::
     juce::StringArray out;
     for (auto& w : watched)
     {
-        const auto prefix = w.endsWithChar ('/') ? w : w + "/";
+        // Either separator, so a path from any system compares.
+        const auto norm = [] (juce::String s) { s = s.replaceCharacter ('\\', '/'); return s.endsWithChar ('/') ? s : s + "/"; };
+        const auto prefix = norm (w);
         for (auto& c : changed)
-            if (c == w || c.startsWith (prefix) || prefix.startsWith (c.endsWithChar ('/') ? c : c + "/")) { out.addIfNotAlreadyThere (w); break; }
+            if (norm (c).startsWith (prefix) || prefix.startsWith (norm (c))) { out.addIfNotAlreadyThere (w); break; }
     }
     return out;
 }

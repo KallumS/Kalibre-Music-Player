@@ -23,6 +23,11 @@ inline constexpr bool windows = true;
 #else
 inline constexpr bool windows = false;
 #endif
+#if defined (__linux__)
+inline constexpr bool onLinux = true;
+#else
+inline constexpr bool onLinux = false;
+#endif
 
 struct Words
 {
@@ -41,9 +46,11 @@ struct Words
 };
 
 inline constexpr Words mac { "Option", "Command", "Control", "-", "Return", "the Finder", "Show in Finder", "the Trash", "Mac", "Terminal", "Kalibre Player", "the Kalibre Player menu" };
-inline constexpr Words pc  { "Alt", "Ctrl", "Ctrl", "+", "Enter", "File Explorer", "Show in File Explorer", "the Recycle Bin", "PC", "PowerShell", "File > Settings", "File > Settings" };
+inline constexpr Words pc  { "Alt", "Ctrl", "Ctrl", "+", "Enter", "File Explorer", "Show in File Explorer", "the Recycle Bin", "PC", "PowerShell", "File > Preferences", "File > Preferences" };
 
-inline const Words& words() { return windows ? pc : mac; }
+inline constexpr Words lin { "Alt", "Ctrl", "Ctrl", "+", "Enter", "the file manager", "Show in File Manager", "the Trash", "computer", "Terminal", "File > Preferences", "File > Preferences" };
+
+inline const Words& words() { return windows ? pc : onLinux ? lin : mac; }
 
 // "Option-click" / "Alt+click", "Command-D" / "Ctrl+D": a key and what's done with it, as each system writes it.
 inline std::string with (const char* key, const std::string& what, const Words& w = words()) { return std::string (key) + w.join + what; }

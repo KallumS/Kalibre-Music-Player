@@ -12,7 +12,7 @@
 # already holds a build of this version; CI caches the prefix.
 set -euo pipefail
 PREFIX="$1"
-VERSION="${FFMPEG_VERSION:-n8.0.3}"
+VERSION="${FFMPEG_VERSION:-n9.0.2}"
 SRC="${PREFIX}-src"
 JOBS="$( (command -v nproc >/dev/null && nproc) || sysctl -n hw.ncpu || echo 4)"
 

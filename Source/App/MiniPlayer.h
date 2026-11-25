@@ -31,10 +31,10 @@ public:
 
 private:
     Context& ctx;
-    IconButton previous { IconButton::Icon::previous, "Previous (Command-Left)" };
+    IconButton previous { IconButton::Icon::previous, "Previous (" + ui::commandKey ("Left") + ")" };
     IconButton playPause { IconButton::Icon::play, "Play or pause (Space)" };
-    IconButton next { IconButton::Icon::next, "Next (Command-Right)" };
-    IconButton expand { IconButton::Icon::expand, "Back to the full window (Command-Shift-M)" };
+    IconButton next { IconButton::Icon::next, "Next (" + ui::commandKey ("Right") + ")" };
+    IconButton expand { IconButton::Icon::expand, "Back to the full window (" + ui::commandKey (platform::with ("Shift", "M").c_str()) + ")" };
     SeekBar seek;
     juce::Image cover;
     std::string coverFor;

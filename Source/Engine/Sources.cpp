@@ -1,5 +1,6 @@
 #include "Sources.h"
 #include "Track.h"
+#include "CdRom.h"
 
 #include <archive.h>
 #include <archive_entry.h>
@@ -21,7 +22,12 @@ bool openArchive (Reader& r, const juce::File& file, juce::String& error)
     archive_read_support_format_all (r.a);
     // A .gz of one file: libarchive reads it as a "raw" archive of one entry.
     archive_read_support_format_raw (r.a);
-    if (archive_read_open_filename (r.a, file.getFullPathName().toRawUTF8(), 64 * 1024) != ARCHIVE_OK)
+   #if JUCE_WINDOWS
+    const bool opened = archive_read_open_filename_w (r.a, file.getFullPathName().toWideCharPointer(), 64 * 1024) == ARCHIVE_OK;
+   #else
+    const bool opened = archive_read_open_filename (r.a, file.getFullPathName().toRawUTF8(), 64 * 1024) == ARCHIVE_OK;
+   #endif
+    if (! opened)
     {
         error = archive_error_string (r.a) ? juce::String (archive_error_string (r.a)) : juce::String ("it couldn't be opened");
         return false;
@@ -94,6 +100,7 @@ bool extract (const juce::File& file, const std::string& entry, juce::MemoryBloc
 
 std::unique_ptr<juce::InputStream> open (const std::string& l, juce::String& error)
 {
+    if (cdrom::isLocation (l)) return cdrom::openLocation (l, error);
     if (auto parts = location::split (l))
     {
         juce::MemoryBlock data;

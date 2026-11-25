@@ -49,10 +49,10 @@ public:
 
 private:
     Context& ctx;
-    IconButton previous { IconButton::Icon::previous, "Previous (Command-Left)" };
+    IconButton previous { IconButton::Icon::previous, "Previous (" + ui::commandKey ("Left") + ")" };
     IconButton playPause { IconButton::Icon::play, "Play or pause (Space)" };
-    IconButton stop { IconButton::Icon::stop, "Stop (Command-.)" };
-    IconButton next { IconButton::Icon::next, "Next (Command-Right)" };
+    IconButton stop { IconButton::Icon::stop, "Stop (" + ui::commandKey (".") + ")" };
+    IconButton next { IconButton::Icon::next, "Next (" + ui::commandKey ("Right") + ")" };
     SeekBar seek;
     juce::Label played, left, title;
     juce::Slider volume { juce::Slider::LinearHorizontal, juce::Slider::NoTextBox };

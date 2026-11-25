@@ -1,4 +1,5 @@
 #include "Commands.h"
+#include "Platform.h"
 
 namespace kp::cmd
 {
@@ -64,7 +65,7 @@ void describe (juce::CommandID id, juce::ApplicationCommandInfo& info)
         case rgAlbum: set ("Scan ReplayGain as Albums", "Edit", "Measure each album's and track's loudness and keep it in their tags"); break;
         case rgRemove: set ("Remove ReplayGain Tags", "Edit", {}); break;
         case queueSelected: set ("Play Next", "Edit", "Queue the chosen tracks after this one"); key ('q', 0); break;
-        case showInFinder: set ("Show in Finder", "Edit", {}); key ('r', cmd | shift); break;
+        case showInFinder: set (platform::words().showInFiles, "Edit", {}); key ('r', cmd | shift); break;
         case copyLocations: set ("Copy File Paths", "Edit", {}); key ('c', cmd | alt); break;
 
         case playPause: set ("Play/Pause", "Playback", {}); key (KeyPress::spaceKey); break;

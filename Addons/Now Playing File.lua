@@ -3,7 +3,7 @@
 -- author: Kalibre Player
 -- description: Writes what's playing to a text file (~/Music/Now Playing.txt), for streaming software to show.
 
-local path = (os.getenv("HOME") or ".") .. "/Music/Now Playing.txt"
+local path = (os.getenv("HOME") or os.getenv("USERPROFILE") or ".") .. "/Music/Now Playing.txt"
 local pattern = kalibre.settings.get("pattern", "%artist% - %title%")
 
 local function write(text)
