@@ -122,6 +122,18 @@ again). They read what's heard, after the equaliser, plug-ins and volume.
 
 ![The Visualisers layout](guide/visualisers.png)
 
+## The mini player
+
+**View > Mini Player** (Command-Shift-M) makes the window a small strip:
+the cover, the title and artist, the seek bar and time, and Previous,
+Play/Pause and Next. It stays in front of other windows (right-click:
+Keep in Front, to turn that off). Drag it by its ground to move it; it
+opens there next time. The button on its right, a double-click, or
+Command-Shift-M again gives back the full window, where it was. Space and
+the other keys still work while it's small.
+
+![The mini player](guide/mini-player.png)
+
 ## The layout, themes and keys
 
 - **View > Edit Layout** (Command-E): each panel shows its name and

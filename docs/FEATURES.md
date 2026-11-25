@@ -33,6 +33,7 @@ only on the Mac by hand (no test can reach it from Linux); ⬜ not yet.
 | | |
 |---|---|
 | ✅ Rearrangeable layout | Edit Layout: replace, split, tab, remove; dividers dragged; five presets. Tested, and in the renders. |
+| ✅ Mini player | View > Mini Player: a strip with the cover, what's playing, the seek bar and Previous/Play/Next, in front of other windows. Tested; the window's behaviour on the Mac is 🟡. |
 | ✅ Themes | Kalibre's twelve, and text size. |
 | ✅ Keyboard shortcuts | Every command, changed in Preferences, kept. |
 | ✅ Lua add-ons | Events, menus, timers, playback, library, playlists, tags, settings; imported from .lua, folders or .zip; stopped if they run away. Tested against a fake and the real controller; four examples. |

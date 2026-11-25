@@ -10,7 +10,7 @@ const juce::Array<juce::CommandID>& all()
     static const juce::Array<juce::CommandID> ids = []
     {
         juce::Array<juce::CommandID> a;
-        for (juce::CommandID c = openFiles; c <= addonsHelp; ++c) a.add (c);
+        for (juce::CommandID c = openFiles; c <= last; ++c) a.add (c);
         return a;
     }();
     return ids;
@@ -93,6 +93,7 @@ void describe (juce::CommandID id, juce::ApplicationCommandInfo& info)
         case equalizerOn: set ("Equaliser On", "Playback", {}); break;
 
         case editLayout: set ("Edit Layout", "View", "Rearrange the window's panels"); key ('e', cmd); break;
+        case miniPlayer: set ("Mini Player", "View", "The window as a small strip: what's playing and the transport"); key ('m', cmd | shift); break;
         case resetLayout: set ("Back to the First Layout", "View", {}); break;
         case textBigger: set ("Bigger Text", "View", {}); key ('=', cmd); break;
         case textSmaller: set ("Smaller Text", "View", {}); key ('-', cmd); break;

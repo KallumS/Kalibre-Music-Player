@@ -30,7 +30,7 @@ private:
 class IconButton : public theme::HouseButton
 {
 public:
-    enum class Icon { previous, play, pause, stop, next };
+    enum class Icon { previous, play, pause, stop, next, expand, shrink };
     IconButton (Icon i, const juce::String& tip) : theme::HouseButton ({}, tip), icon (i) { setTitle (tip.upToFirstOccurrenceOf (" (", false, false)); }
     void setIcon (Icon i) { if (icon != i) { icon = i; repaint(); } }
     void paintButton (juce::Graphics&, bool over, bool down) override;

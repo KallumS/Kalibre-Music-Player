@@ -21,3 +21,4 @@ One record per choice, by number. Code comments cite them: "(decision 0014)".
 | 0015 | [Every action a command, every key changeable](0015-commands.md) |
 | 0016 | [The meters read what's heard](0016-meters.md) |
 | 0017 | [Media keys and Now Playing](0017-media-keys.md) |
+| 0018 | [The mini player is the same window, made small](0018-mini-player.md) |

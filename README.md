@@ -47,6 +47,7 @@ laid out as you like.
 - **The layout**: View > Edit Layout, then replace any panel, put another
   beside it or in tabs with it, or take it out; drag the dividers. Five
   layouts to start from.
+- **A mini player** (View > Mini Player): a small strip in front of other windows.
 - **Kalibre's twelve themes**, and the text size.
 - **Keyboard shortcuts** for everything, changed in Preferences.
 - **Add-ons in Lua**: File > Import Add-on. They add menu items, react to

@@ -3,6 +3,15 @@
 The version is in Kalibre Player > About Kalibre Player. Every change raises
 it: the last number for a fix, the middle one for something new.
 
+## 0.2.0 (25 November 2026)
+
+- The mini player: View > Mini Player (Command-Shift-M) makes the window a
+  small strip with the cover, what's playing, the seek bar and Previous,
+  Play and Next, kept in front of other windows. Drag it anywhere;
+  right-click to keep it in front or not. Its expand button, a
+  double-click, or Command-Shift-M again brings back the full window where
+  it was. The player opens as it was left.
+
 ## 0.1.1 (25 November 2026)
 
 - Crossfade always lasts as long as it's set to: on a fast Mac the next

@@ -73,6 +73,11 @@ int main (int argc, char** argv)
     main.layoutView().setEditing (true);
     snap ("Editing the Layout");
     main.layoutView().setEditing (false);
+    main.setMini (true);
+    main.setSize (MiniPlayer::size().x, MiniPlayer::size().y);
+    snap ("Mini Player");
+    main.setMini (false);
+    main.setSize (1400, 860);
     theme::usePalette (4);
     main.layoutView().setLayout (layout::presets()[2].root);
     snap ("Theme Porcelain");

@@ -160,3 +160,27 @@ TEST ("window: the example add-ons load without errors")
     CHECK (loaded >= 4);
     CHECK (c.addons->menuItems().size() >= 10);
 }
+
+TEST ("window: the mini player, and back")
+{
+    Controller c (test::scratch().getChildFile ("settings-mini"), false);
+    MainComponent main (c);
+    main.setSize (1200, 760);
+    std::vector<bool> told;
+    main.onMiniChanged = [&] (bool on) { told.push_back (on); };
+    main.commands.invokeDirectly (cmd::miniPlayer, false);
+    CHECK (main.isMini());
+    CHECK_EQ (told, (std::vector<bool> { true }));
+    CHECK (! main.layoutView().isVisible());
+    CHECK (c.settings.getBool ("mini", false));
+    // Its own controls still work: Next with nothing playing starts the playlist.
+    c.addFiles (c.playlists.active, { musicFolder() });
+    main.commands.invokeDirectly (cmd::playPause, false);
+    CHECK (c.playing());
+    c.stop();
+    main.commands.invokeDirectly (cmd::miniPlayer, false);
+    CHECK (! main.isMini());
+    CHECK (main.layoutView().isVisible());
+    CHECK_EQ (told, (std::vector<bool> { true, false }));
+    CHECK (! c.settings.getBool ("mini", true));
+}

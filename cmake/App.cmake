@@ -89,6 +89,7 @@ add_library(KPApp STATIC
     Source/App/LibraryView.cpp
     Source/App/Visualisers.cpp
     Source/App/TransportBar.cpp
+    Source/App/MiniPlayer.cpp
     Source/App/EqualizerView.cpp
     Source/App/LayoutView.cpp
     Source/App/Dialogs.cpp
