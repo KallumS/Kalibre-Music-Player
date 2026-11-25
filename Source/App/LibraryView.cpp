@@ -57,7 +57,10 @@ struct LibraryView::Column : public Component, private ListBoxModel
     {
         if (f.contains ("%")) return f;
         if (f == "directoryname") return "Folder";
-        return f.substring (0, 1).toUpperCase() + f.substring (1);
+        StringArray words;
+        words.addTokens (f, " ", "");
+        for (auto& w : words) w = w.substring (0, 1).toUpperCase() + w.substring (1);
+        return words.joinIntoString (" ");
     }
 
     void selectField()
@@ -121,7 +124,8 @@ struct LibraryView::Column : public Component, private ListBoxModel
         auto& v = values[(size_t) row];
         g.setFont (theme::font (theme::bodyPoints, row == 0));
         g.setColour (theme::text);
-        const auto label = row == 0 ? "All (" + String (values.size() - 1) + ")" : u8 (v.value);
+        const auto plural = field.contains ("%") ? String ("Values") : fieldTitle (field) + "s";
+        const auto label = row == 0 ? "All (" + String (values.size() - 1) + " " + plural + ")" : u8 (v.value);
         g.drawText (label, 8, 0, w - 56, h, Justification::centredLeft, true);
         g.setColour (theme::textSecondary);
         g.setFont (theme::font (theme::smallPoints));

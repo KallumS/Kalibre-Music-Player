@@ -239,6 +239,8 @@ void PeakMeter::draw (Graphics& g, Rectangle<float> a)
 {
     const float floor = -60.0f;
     auto scale = a.removeFromBottom (16);
+    auto labels = a.removeFromLeft (64);
+    scale.removeFromLeft (64);
     auto xOf = [&] (float db) { return a.getX() + jlimit (0.0f, 1.0f, (db - floor) / -floor) * a.getWidth(); };
     const float h = jmin (28.0f, (a.getHeight() - 8) / 2);
     for (int c = 0; c < 2; ++c)
@@ -257,10 +259,10 @@ void PeakMeter::draw (Graphics& g, Rectangle<float> a)
         g.setColour (theme::text);
         g.fillRect (xOf (held[c]) - 1, row.getY(), 2.0f, row.getHeight());
         if (clipped[c]) { g.setColour (theme::warn); g.fillRect (row.withLeft (row.getRight() - 6)); }
-        g.setColour (theme::textSecondary);
-        g.setFont (theme::font (theme::smallPoints));
+        g.setColour (theme::text);
+        g.setFont (theme::font (theme::smallPoints, true));
         g.drawText ((c == 0 ? "L  " : "R  ") + (held[c] > -100 ? String (held[c], 1) : String::fromUTF8 ("\xe2\x88\x92\xe2\x88\x9e")),
-                    row.reduced (4, 0), Justification::centredLeft);
+                    labels.withY (row.getY()).withHeight (row.getHeight()), Justification::centredLeft);
     }
     g.setColour (theme::textSecondary);
     for (float db : { -48.0f, -36.0f, -24.0f, -12.0f, -6.0f, -3.0f, 0.0f })

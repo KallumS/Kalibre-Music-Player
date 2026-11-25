@@ -47,9 +47,9 @@ int main (int argc, char** argv)
     c.playItem (0, 1);
     // Sound through the meters, as if heard.
     std::vector<float> l (512), r (512);
-    test::waitFor ([&] { for (auto& e : c.player.poll()) (void) e; return c.player.bufferedFrames() > 8000; });
-    for (int b = 0; b < 40; ++b) { c.player.renderForTest (l.data(), r.data(), 512); juce::Thread::sleep (2); }
-    test::waitFor ([&] { return false; }, 300);
+    test::waitFor ([&] { return c.player.bufferedFrames() > 20000; });
+    for (int b = 0; b < 60; ++b) { c.player.renderForTest (l.data(), r.data(), 512); test::waitFor ([] { return false; }, 2); }
+    test::waitFor ([&] { return c.nowPlayingTrack().has_value(); });
     c.setSelection ({ 1 });
     c.say ("Playing from the Default playlist.");
 

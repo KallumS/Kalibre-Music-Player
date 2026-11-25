@@ -145,3 +145,18 @@ TEST ("window: an add-on reaches the real player")
     CHECK_EQ (c.importAddon (zip), juce::String());
     CHECK_EQ (c.addons->menuItems().size(), (size_t) 2);
 }
+
+TEST ("window: the example add-ons load without errors")
+{
+    Controller c (test::scratch().getChildFile ("settings-examples"), false);
+    int loaded = 0;
+    for (auto& f : juce::File (KP_SOURCE_DIR).getChildFile ("Addons").findChildFiles (juce::File::findFiles, false, "*.lua"))
+    {
+        const auto id = f.getFileName().toStdString();
+        if (! c.addons->load (id, f.loadFileAsString().toStdString()))
+            check::fail (__FILE__, __LINE__, id + ": " + c.addons->info (id)->error);
+        ++loaded;
+    }
+    CHECK (loaded >= 4);
+    CHECK (c.addons->menuItems().size() >= 10);
+}

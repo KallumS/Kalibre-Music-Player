@@ -26,6 +26,19 @@ private:
     double fractionAt (int x) const;
 };
 
+// A transport button with its symbol drawn, not set in type (the font's are tiny).
+class IconButton : public theme::HouseButton
+{
+public:
+    enum class Icon { previous, play, pause, stop, next };
+    IconButton (Icon i, const juce::String& tip) : theme::HouseButton ({}, tip), icon (i) { setTitle (tip.upToFirstOccurrenceOf (" (", false, false)); }
+    void setIcon (Icon i) { if (icon != i) { icon = i; repaint(); } }
+    void paintButton (juce::Graphics&, bool over, bool down) override;
+
+private:
+    Icon icon;
+};
+
 class TransportBar : public juce::Component, private Controller::Listener, private juce::Timer
 {
 public:
@@ -36,10 +49,10 @@ public:
 
 private:
     Context& ctx;
-    theme::HouseButton previous { juce::String::fromUTF8 ("\xe2\x8f\xae"), "Previous (Command-Left)" };
-    theme::HouseButton playPause { juce::String::fromUTF8 ("\xe2\x96\xb6"), "Play or pause (Space)" };
-    theme::HouseButton stop { juce::String::fromUTF8 ("\xe2\x96\xa0"), "Stop" };
-    theme::HouseButton next { juce::String::fromUTF8 ("\xe2\x8f\xad"), "Next (Command-Right)" };
+    IconButton previous { IconButton::Icon::previous, "Previous (Command-Left)" };
+    IconButton playPause { IconButton::Icon::play, "Play or pause (Space)" };
+    IconButton stop { IconButton::Icon::stop, "Stop (Command-.)" };
+    IconButton next { IconButton::Icon::next, "Next (Command-Right)" };
     SeekBar seek;
     juce::Label played, left, title;
     juce::Slider volume { juce::Slider::LinearHorizontal, juce::Slider::NoTextBox };

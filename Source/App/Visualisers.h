@@ -34,7 +34,8 @@ protected:
     virtual void draw (juce::Graphics&, juce::Rectangle<float>) = 0;
     virtual void update() {}
     virtual void addToMenu (juce::PopupMenu&) {}
-    void timerCallback() override { if (isShowing()) { update(); repaint(); } }
+    // Hidden in a tab not chosen, it rests.
+    void timerCallback() override { if (isVisible() && getWidth() > 0) { update(); repaint(); } }
 };
 
 class Oscilloscope : public Visualiser

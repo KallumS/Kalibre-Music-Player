@@ -5,6 +5,31 @@ namespace kp
 {
 using namespace juce;
 
+void IconButton::paintButton (Graphics& g, bool over, bool down)
+{
+    getLookAndFeel().drawButtonBackground (g, *this, findColour (TextButton::buttonColourId), over, down);
+    auto r = getLocalBounds().toFloat().withSizeKeepingCentre (14.0f, 14.0f);
+    Path p;
+    auto triangle = [&p] (Rectangle<float> a, bool right)
+    {
+        if (right) p.addTriangle (a.getX(), a.getY(), a.getRight(), a.getCentreY(), a.getX(), a.getBottom());
+        else p.addTriangle (a.getRight(), a.getY(), a.getX(), a.getCentreY(), a.getRight(), a.getBottom());
+    };
+    switch (icon)
+    {
+        case Icon::play: triangle (r.reduced (1.0f, 0.0f).translated (1.0f, 0.0f), true); break;
+        case Icon::pause: p.addRectangle (r.getX() + 1.5f, r.getY(), 4.0f, r.getHeight()); p.addRectangle (r.getRight() - 5.5f, r.getY(), 4.0f, r.getHeight()); break;
+        case Icon::stop: p.addRectangle (r.reduced (1.5f)); break;
+        case Icon::previous: p.addRectangle (r.getX(), r.getY(), 2.5f, r.getHeight()); triangle (r.withTrimmedLeft (3.0f).removeFromLeft (5.5f), false);
+                             triangle (r.withTrimmedLeft (8.5f), false); break;
+        case Icon::next: p.addRectangle (r.getRight() - 2.5f, r.getY(), 2.5f, r.getHeight()); triangle (r.withTrimmedRight (3.0f).removeFromRight (5.5f), true);
+                         triangle (r.withTrimmedRight (8.5f), true); break;
+    }
+    g.setColour (theme::ink);
+    g.fillPath (p);
+    if (hasKeyboardFocus (false)) theme::drawFocusRing (g, getLocalBounds().toFloat());
+}
+
 double SeekBar::fractionAt (int x) const { return jlimit (0.0, 1.0, (double) (x - 6) / jmax (1, getWidth() - 12)); }
 
 void SeekBar::paint (Graphics& g)
@@ -100,7 +125,7 @@ void TransportBar::resized()
 void TransportBar::update()
 {
     const bool on = ctx.c.playing() && ! ctx.c.paused();
-    playPause.setButtonText (String::fromUTF8 (on ? "\xe2\x8f\xb8" : "\xe2\x96\xb6"));
+    playPause.setIcon (on ? IconButton::Icon::pause : IconButton::Icon::play);
     playPause.setToggleState (on, dontSendNotification);
     if (auto t = ctx.c.nowPlayingTrack()) title.setText (String::fromUTF8 (tf::format ("%title%[  \xc2\xb7  %artist%]", *t).c_str()), dontSendNotification);
     else title.setText ({}, dontSendNotification);
