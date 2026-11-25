@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- The app icon (decision 0048): the source of Icon.png, drawn at 1024 by a browser (Playwright's Chromium). House colours only (docs/COLOUR.md). -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#323844"/>
+      <stop offset="1" stop-color="#181B21"/>
+    </linearGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.16"/>
+      <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="steel" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#C9CFD8"/>
+      <stop offset="0.5" stop-color="#E6EAF0"/>
+      <stop offset="1" stop-color="#A9AFBA"/>
+    </linearGradient>
+    <linearGradient id="steel2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#B7BDC7"/>
+      <stop offset="1" stop-color="#8F96A2"/>
+    </linearGradient>
+    <linearGradient id="yellow" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#E8DC00"/>
+      <stop offset="1" stop-color="#FFF64D"/>
+    </linearGradient>
+        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#000" flood-opacity="0.45"/>
+    </filter>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="0" stdDeviation="16" flood-color="#FFF200" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- The tile, on Apple's grid: 824 square, 100 in. -->
+  <g filter="url(#shadow)">
+    <rect x="100" y="100" width="824" height="824" rx="186" fill="url(#bg)"/>
+  </g>
+  <rect x="100" y="100" width="824" height="824" rx="186" fill="url(#rim)"/>
+  <rect x="101.5" y="101.5" width="821" height="821" rx="184.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.08" stroke-width="3"/>
+
+  <g transform="translate(-18 0)">
+  <!-- The scale: calibration ticks down the stem's left side; the middle one is "on". -->
+  <g fill="#6D7581">
+    <rect x="270" y="268" width="70" height="12" rx="6"/>
+    <rect x="300" y="328" width="40" height="10" rx="5"/>
+    <rect x="300" y="388" width="40" height="10" rx="5"/>
+    <rect x="300" y="448" width="40" height="10" rx="5"/>
+    <rect x="262" y="505" width="78" height="14" rx="7" fill="#FFF200"/>
+    <rect x="300" y="566" width="40" height="10" rx="5"/>
+    <rect x="300" y="626" width="40" height="10" rx="5"/>
+    <rect x="300" y="686" width="40" height="10" rx="5"/>
+    <rect x="270" y="744" width="70" height="12" rx="6"/>
+  </g>
+  <!-- The K: stem, the leg growing from under the arm, the arm in the accent. -->
+  <rect x="362" y="268" width="104" height="488" rx="12" fill="url(#steel)"/>
+  <polygon points="660,756 790,756 557.3,465.1 492.3,546.4" fill="url(#steel2)"/>
+  <polygon points="650,268 780,268 466,660.5 466,498" fill="url(#yellow)" filter="url(#glow)"/>
+  </g>
+</svg>

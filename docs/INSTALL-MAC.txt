@@ -1,0 +1,20 @@
+Kalibre Player for Apple silicon Macs
+=====================================
+
+1. Drag Kalibre Player into Applications.
+2. The first time, right-click Kalibre Player and choose Open, then Open
+   again. (It isn't signed with an Apple Developer ID yet, so macOS asks once.)
+3. Add your music: click Add a Folder in the library on the left. The
+   library watches that folder from then on.
+4. Double-click a track to play it. Space plays and pauses; the keyboard's
+   media keys work too.
+
+The output device, ReplayGain and crossfade are in Kalibre Player >
+Preferences (Command-,); so are your AU and VST3 effects (Plug-ins: scan,
+then Add). View > Edit Layout rearranges the window.
+
+Add-ons: the "Add-on Examples" folder on this disk has four. File > Import
+Add-on adds one; they appear in the Add-ons menu.
+
+Your library, playlists and settings are kept in
+~/Library/Application Support/Kalibre Player.

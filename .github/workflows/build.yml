@@ -1,0 +1,105 @@
+# Builds Kalibre Player for Apple silicon Macs (a .dmg to download from the
+# run's Artifacts), and runs the tests on Linux and macOS. Pushing a tag that
+# starts with "v" (v0.1.0) also publishes a GitHub Release with the .dmg.
+
+name: Build
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  linux:
+    name: Tests (Linux)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build nasm libasound2-dev libjack-jackd2-dev libfreetype-dev libfontconfig1-dev \
+            libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxext-dev libxcomposite-dev libxi-dev \
+            libgl1-mesa-dev zlib1g-dev xvfb
+      - name: Core tests (no JUCE)
+        run: |
+          cmake -B build-core -G Ninja -DKP_BUILD_APP=OFF -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-core
+          ./build-core/KPTests
+      # FFmpeg, LAME and libopus, built once and kept until the script changes.
+      - uses: actions/cache@v4
+        with:
+          path: ~/kp-ffmpeg
+          key: ffmpeg-linux-${{ hashFiles('tools/build-ffmpeg.sh', 'cmake/FFmpeg.cmake') }}
+      - name: The app, its tests and the renderer
+        run: |
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DKP_FFMPEG_DIR=$HOME/kp-ffmpeg
+          cmake --build build --target KalibrePlayer KPAppTests KPRender
+      - name: App tests (formats, playback, tags, archives, jobs, window)
+        run: xvfb-run -a -s "-screen 0 1600x1000x24" ./build/KPAppTests_artefacts/Debug/KPAppTests
+      - name: Render the window
+        run: xvfb-run -a -s "-screen 0 1600x1000x24" ./build/KPRender_artefacts/Debug/KPRender renders
+      - uses: actions/upload-artifact@v4
+        with:
+          name: window-renders
+          path: renders/*.png
+
+  macos:
+    name: macOS app
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build tools
+        run: brew install ninja pkgconf || true
+      - uses: actions/cache@v4
+        with:
+          path: ~/kp-ffmpeg
+          key: ffmpeg-macos-arm64-${{ hashFiles('tools/build-ffmpeg.sh', 'cmake/FFmpeg.cmake') }}
+      - name: Configure
+        run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES=arm64 -DKP_FFMPEG_DIR=$HOME/kp-ffmpeg
+      - name: Show the FFmpeg build's log if it failed
+        if: failure()
+        run: tail -100 build/ffmpeg-build.log || true
+      - name: Build
+        run: cmake --build build --target KalibrePlayer KPTests KPAppTests
+      - name: Core tests
+        run: ./build/KPTests
+      - name: App tests
+        run: ./build/KPAppTests_artefacts/Release/KPAppTests
+      - name: Package
+        run: |
+          APP="build/KalibrePlayer_artefacts/Release/Kalibre Player.app"
+          lipo -info "$APP/Contents/MacOS/Kalibre Player"
+          # Nothing outside the app but the system's own.
+          otool -L "$APP/Contents/MacOS/Kalibre Player" | grep -v -E "/System/|/usr/lib/|Kalibre Player" && exit 1 || true
+          mkdir -p "$APP/Contents/Resources/Add-on Examples"
+          cp Addons/*.lua "$APP/Contents/Resources/Add-on Examples/"
+          # An ad-hoc signature: enough for an Apple silicon Mac to run it.
+          # (No Developer ID yet, so the first launch needs right-click > Open.)
+          codesign --force --deep --sign - "$APP"
+          mkdir -p dmg
+          cp -R "$APP" dmg/
+          ln -s /Applications dmg/Applications
+          cp docs/INSTALL-MAC.txt "dmg/Read me first.txt"
+          mkdir -p "dmg/Add-on Examples" && cp Addons/*.lua "dmg/Add-on Examples/"
+          made=0
+          for attempt in 1 2 3 4 5; do
+            hdiutil create -volname "Kalibre Player" -srcfolder dmg -ov -format UDZO KalibrePlayer-macOS.dmg && { made=1; break; }
+            echo "hdiutil failed (attempt $attempt), trying again"
+            sleep 10
+          done
+          [ "$made" = 1 ]
+      - uses: actions/upload-artifact@v4
+        with:
+          name: KalibrePlayer-macOS
+          path: KalibrePlayer-macOS.dmg
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: KalibrePlayer-macOS.dmg
