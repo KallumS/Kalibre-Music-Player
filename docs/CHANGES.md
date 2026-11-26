@@ -3,6 +3,11 @@
 The version is in Kalibre Player > About Kalibre Player. Every change raises
 it: the last number for a fix, the middle one for something new.
 
+## 0.3.2 (26 November 2026)
+
+- An icon of its own: Kalibre's K on a bluer tile, its calibration ticks
+  become level bars, as a meter shows sound (0021).
+
 ## 0.3.1 (26 November 2026)
 
 - Preferences' tabs sit on the theme's ground (beside them showed white on

@@ -7,6 +7,11 @@ laid out as you like.
 
 ![The window: the library, the playlist, the cover and the meters](docs/guide/library-and-playlist.png)
 
+Its icon is Kalibre's K, on a bluer tile, with level bars where Kalibre has
+a scale:
+
+<img src="Resources/Icon.png" width="128" alt="Kalibre Player's icon">
+
 ## What's in it
 
 **Playback**

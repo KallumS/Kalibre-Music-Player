@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
-  <!-- The app icon (decision 0048): the source of Icon.png, drawn at 1024 by a browser (Playwright's Chromium). House colours only (docs/COLOUR.md). -->
+  <!-- Kalibre Player's icon (decision 0021): Kalibre's K on a bluer tile, its calibration ticks become level bars, as a meter shows sound. The source of Icon.png, drawn at 1024 by a browser (tools/render-icon.js). House colours only. -->
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#323844"/>
-      <stop offset="1" stop-color="#181B21"/>
+      <stop offset="0" stop-color="#2C3A55"/>
+      <stop offset="1" stop-color="#141925"/>
     </linearGradient>
     <linearGradient id="rim" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.16"/>
@@ -38,17 +38,17 @@
   <rect x="101.5" y="101.5" width="821" height="821" rx="184.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.08" stroke-width="3"/>
 
   <g transform="translate(-18 0)">
-  <!-- The scale: calibration ticks down the stem's left side; the middle one is "on". -->
+  <!-- The levels: bars down the stem's left side, long and short as a meter shows sound; the middle one is "on". -->
   <g fill="#6D7581">
-    <rect x="270" y="268" width="70" height="12" rx="6"/>
-    <rect x="300" y="328" width="40" height="10" rx="5"/>
-    <rect x="300" y="388" width="40" height="10" rx="5"/>
-    <rect x="300" y="448" width="40" height="10" rx="5"/>
-    <rect x="262" y="505" width="78" height="14" rx="7" fill="#FFF200"/>
-    <rect x="300" y="566" width="40" height="10" rx="5"/>
-    <rect x="300" y="626" width="40" height="10" rx="5"/>
-    <rect x="300" y="686" width="40" height="10" rx="5"/>
-    <rect x="270" y="744" width="70" height="12" rx="6"/>
+    <rect x="290" y="268" width="50" height="12" rx="6"/>
+    <rect x="258" y="328" width="82" height="12" rx="6"/>
+    <rect x="282" y="388" width="58" height="12" rx="6"/>
+    <rect x="236" y="448" width="104" height="12" rx="6"/>
+    <rect x="216" y="505" width="124" height="14" rx="7" fill="#FFF200"/>
+    <rect x="250" y="566" width="90" height="12" rx="6"/>
+    <rect x="276" y="626" width="64" height="12" rx="6"/>
+    <rect x="244" y="686" width="96" height="12" rx="6"/>
+    <rect x="296" y="744" width="44" height="12" rx="6"/>
   </g>
   <!-- The K: stem, the leg growing from under the arm, the arm in the accent. -->
   <rect x="362" y="268" width="104" height="488" rx="12" fill="url(#steel)"/>

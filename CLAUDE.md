@@ -19,8 +19,8 @@ KalibrePlayer-macOS); Windows' `.zip` and Linux's `.tar.gz` come from the same r
 
 ## Where it was left
 
-0.3.1 on branch `claude/sleepy-pasteur-y7ag9n`, green on all three systems;
-`main` has 0.1.1 (pull request #1): a new pull request brings the rest. What
+0.3.2 on branch `claude/sleepy-pasteur-y7ag9n`; `main` has 0.3.0 (pull
+request #2): a new pull request brings 0.3.1 (docs) and 0.3.2 (the icon). What
 needs trying by hand, and what isn't done, is in `docs/FEATURES.md` and the
 last session's record. At the end of a session, add its record to
 `docs/sessions/`.
