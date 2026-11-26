@@ -1,7 +1,8 @@
 # Features
 
-What was asked for, and where it stands. ✅ done and tested; 🟡 done, tested
-only on the Mac by hand (no test can reach it from Linux); ⬜ not yet.
+What was asked for, and where it stands (0.3.1). ✅ done, and tested
+automatically on CI; 🟡 done and built on every system, but no automated test
+can reach it, and it hasn't yet been tried by hand; ⬜ not yet.
 
 ## Core playback and formats
 
@@ -45,6 +46,19 @@ only on the Mac by hand (no test can reach it from Linux); ⬜ not yet.
 | ✅ Mac (Apple silicon) | The first; built and tested on CI. |
 | ✅ Windows (64-bit) | Built and tested on CI (MSVC, FFmpeg from vcpkg). CDs read from the drive, folders watched with ReadDirectoryChangesW, media keys as hot keys: 🟡. |
 | ✅ Linux (64-bit) | Built and tested on CI; a .tar.gz with an installer. CDs read from the drive (🟡); folders watched with inotify (tested). |
+
+## Asked for later
+
+| | |
+|---|---|
+| ✅ Mini player (0.2.0) | View > Mini Player. Switching and its controls tested; the window's own behaviour (no title bar, in front, dragging) 🟡. |
+| ✅ Windows and Linux (0.3.0) | See Systems. |
+
+## To try by hand
+
+A real audio CD (play and rip) on each system; AU and VST3 plug-ins and their
+windows; the media keys (Mac, Windows); folder watching on Windows; the mini
+player on Windows and Linux.
 
 ## Not yet
 
