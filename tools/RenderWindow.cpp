@@ -2,6 +2,7 @@
 // be seen from Linux (Kalibre's decision 0023):
 //   KPRender <folder>
 #include "AppTestHelpers.h"
+#include "Dialogs.h"
 #include "MainComponent.h"
 #include "TagIO.h"
 
@@ -82,6 +83,39 @@ int main (int argc, char** argv)
     main.layoutView().setLayout (layout::presets()[2].root);
     snap ("Theme Porcelain");
     theme::usePalette (0);
+
+    // The windows the player opens for work on files, each drawn on its own.
+    auto snapWindow = [&] (const juce::String& name, std::function<void()> open)
+    {
+        open();
+        test::waitFor ([] { return false; }, 300);
+        auto& desktop = juce::Desktop::getInstance();
+        for (int k = desktop.getNumComponents(); --k >= 0;)
+            if (auto* w = dynamic_cast<juce::DocumentWindow*> (desktop.getComponent (k)); w && w->isVisible() && w->getContentComponent() != &main)
+            {
+                auto* content = w->getContentComponent();
+                auto img = content->createComponentSnapshot (content->getLocalBounds(), true, 1.0f);
+                juce::FileOutputStream os (out.getChildFile (name + ".png"));
+                os.setPosition (0);
+                os.truncate();
+                juce::PNGImageFormat().writeImageToStream (img, os);
+                std::printf ("%s\n", out.getChildFile (name + ".png").getFullPathName().toRawUTF8());
+                break;
+            }
+        dialogs::closeAll();
+        test::waitFor ([] { return false; }, 100);
+    };
+    std::vector<std::string> some (c.active().items.begin(), c.active().items.begin() + 3);
+    snapWindow ("Tag Editor", [&] { dialogs::tagEditor (main.ctx, some); });
+    snapWindow ("Convert", [&] { dialogs::convert (main.ctx, some); });
+    snapWindow ("Rename Files", [&] { dialogs::fileOperation (main.ctx, some, dialogs::FileOp::move); });
+    snapWindow ("Preferences", [&] { dialogs::preferences (main.ctx, 1); });
+    snapWindow ("Add-ons", [&]
+    {
+        for (auto& f : juce::File (KP_SOURCE_DIR).getChildFile ("Addons").findChildFiles (juce::File::findFiles, false, "*.lua"))
+            c.addons->load (f.getFileName().toStdString(), f.loadFileAsString().toStdString());
+        dialogs::addons (main.ctx);
+    });
     juce::LookAndFeel::setDefaultLookAndFeel (nullptr);
     test::scratch().deleteRecursively();
     return 0;
