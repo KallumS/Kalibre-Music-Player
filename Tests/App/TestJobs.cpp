@@ -21,7 +21,8 @@ TEST ("jobs: converting keeps the tags and names the file by the pattern")
         juce::File out;
         juce::String e;
         CHECK (convert (t, o, out, e));
-        CHECK_EQ (out.getRelativePathFrom (o.folder), juce::String ("AC_DC/Live/04 Song_.") + encodeFormat (id)->extension);
+        // Folders as the system writes them (\ on Windows).
+        CHECK_EQ (out.getRelativePathFrom (o.folder).replaceCharacter ('\\', '/'), juce::String ("AC_DC/Live/04 Song_.") + encodeFormat (id)->extension);
         Track back;
         CHECK (tagio::read (out.getFullPathName().toStdString(), back, e));
         CHECK_EQ (back.first ("title"), std::string ("Song?"));
@@ -80,4 +81,16 @@ TEST ("jobs: run in parallel and say when they're done")
     jobs.cancelAll();
     CHECK (test::waitFor ([&] { return stopped; }));
     CHECK (slow->done.load() < 1000);
+}
+
+TEST ("jobs: what's left to say when a job ends is dropped once its owner is gone")
+{
+    bool said = false;
+    {
+        Jobs jobs;
+        jobs.run ("Quick", 1, [] (int, Job&) {}, [&] (Job&) { said = true; });
+        juce::Thread::sleep (200);   // done on the pool; its finish waits for the message loop
+    }
+    test::waitFor ([] { return false; }, 300);
+    CHECK (! said);
 }

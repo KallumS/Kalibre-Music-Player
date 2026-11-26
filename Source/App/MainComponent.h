@@ -7,6 +7,7 @@
 #pragma once
 
 #include "LayoutView.h"
+#include "MiniPlayer.h"
 #include "Panels.h"
 
 namespace kp
@@ -48,6 +49,12 @@ public:
     void openFiles (const juce::StringArray&, bool play);   // from the Finder or the command line
     std::function<void (const juce::String&)> setTitle;    // the window's title
 
+    // The mini player (decision 0018): the window makes itself small or full when told.
+    void setMini (bool);
+    bool isMini() const { return miniMode; }
+    std::function<void (bool)> onMiniChanged;
+    std::function<void (bool)> onKeepInFront;
+
     // MenuBarModel
     juce::StringArray getMenuBarNames() override;
     juce::PopupMenu getMenuForIndex (int, const juce::String&) override;
@@ -68,6 +75,8 @@ private:
     std::unique_ptr<juce::MenuBarComponent> menuBar;
     MessageLine messageLine;
     LayoutView view;
+    MiniPlayer mini;
+    bool miniMode = false;
     std::unique_ptr<juce::FileChooser> chooser;
 
     void playbackChanged() override;

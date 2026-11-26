@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(KalibrePlayer VERSION 0.1.1 LANGUAGES C CXX)
+project(KalibrePlayer VERSION 0.3.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -10,6 +10,14 @@ if(APPLE)
     # Apple silicon only, as Kalibre (decision 0001).
     set(CMAKE_OSX_DEPLOYMENT_TARGET "12.0" CACHE STRING "Minimum macOS version")
     set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE STRING "Apple silicon")
+endif()
+
+if(MSVC)
+    # Windows (decision 0020): the C++ runtime inside the .exe, so nothing else needs
+    # installing; sources are UTF-8; Windows' min and max macros kept out of std::min.
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    add_compile_options(/utf-8 /bigobj /Zc:__cplusplus)
+    add_compile_definitions(NOMINMAX _CRT_SECURE_NO_WARNINGS _USE_MATH_DEFINES WIN32_LEAN_AND_MEAN)
 endif()
 
 option(KP_BUILD_APP   "Build the app (fetches JUCE, TagLib, libarchive and builds FFmpeg)" ON)

@@ -83,6 +83,8 @@ public:
 private:
     juce::ThreadPool pool;
     std::mutex lock;
+    // False once the jobs' owner is gone: a finish already posted to the window's thread does nothing.
+    std::shared_ptr<std::atomic<bool>> alive = std::make_shared<std::atomic<bool>> (true);
     std::vector<std::shared_ptr<Job>> jobs;
 };
 

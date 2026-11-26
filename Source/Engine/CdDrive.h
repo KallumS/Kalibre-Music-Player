@@ -1,8 +1,10 @@
 /*
-    CdDrive - audio CDs in the Mac's drive (decision 0010). macOS shows an
-    audio CD as a disk of AIFF files, "1 Audio Track.aiff" and on, with its
-    table of contents beside them in a hidden .TOC.plist. Playing a CD is
-    playing those; ripping converts them, named from MusicBrainz.
+    CdDrive - audio CDs in the drive (decision 0010). macOS shows an audio
+    CD as a disk of AIFF files, "1 Audio Track.aiff" and on, with its table
+    of contents beside them in a hidden .TOC.plist. Windows and Linux are
+    asked for the disc's contents and its sectors (CdRom, decision 0019).
+    Either way a disc is a list of track locations: playing a CD is playing
+    those; ripping converts them, named from MusicBrainz.
 */
 
 #pragma once
@@ -18,13 +20,13 @@ namespace kp
 
 struct AudioCdDisc
 {
-    juce::File volume;
-    juce::Array<juce::File> tracks;   // in order
+    juce::String label;                 // the volume's name, or the drive's
+    std::vector<std::string> tracks;    // locations, in order
     cd::Toc toc;
-    juce::String name() const { return volume.getFileName(); }
+    juce::String name() const { return label; }
 };
 
-// The audio CDs mounted now.
+// The audio CDs in the drives now (on a Mac, those mounted under `volumes`).
 std::vector<AudioCdDisc> findAudioCds (const juce::File& volumes = juce::File ("/Volumes"));
 // The table of contents from a .TOC.plist's text.
 std::optional<cd::Toc> parseTocPlist (const juce::String& xml);

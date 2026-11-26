@@ -3,7 +3,7 @@
 -- author: Kalibre Player
 -- description: Keeps a log of every track heard past its middle (~/Music/Listening Log.tsv), and counts plays in a PLAY_COUNT tag.
 
-local path = (os.getenv("HOME") or ".") .. "/Music/Listening Log.tsv"
+local path = (os.getenv("HOME") or os.getenv("USERPROFILE") or ".") .. "/Music/Listening Log.tsv"
 local current, heard = nil, 0
 
 kalibre.on("track_started", function(t) current = t heard = 0 end)

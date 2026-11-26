@@ -1,6 +1,7 @@
-# Builds Kalibre Player for Apple silicon Macs (a .dmg to download from the
-# run's Artifacts), and runs the tests on Linux and macOS. Pushing a tag that
-# starts with "v" (v0.1.0) also publishes a GitHub Release with the .dmg.
+# Builds Kalibre Player for Apple silicon Macs (a .dmg), Windows (a .zip)
+# and Linux (a .tar.gz), to download from the run's Artifacts, and runs the
+# tests on all three. Pushing a tag that starts with "v" (v0.3.0) also
+# publishes a GitHub Release with all three attached.
 
 name: Build
 
@@ -16,7 +17,7 @@ permissions:
 
 jobs:
   linux:
-    name: Tests (Linux)
+    name: Linux app
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -25,7 +26,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ninja-build nasm libasound2-dev libjack-jackd2-dev libfreetype-dev libfontconfig1-dev \
             libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxext-dev libxcomposite-dev libxi-dev \
-            libgl1-mesa-dev zlib1g-dev xvfb
+            libgl1-mesa-dev libcurl4-openssl-dev zlib1g-dev xvfb
       - name: Core tests (no JUCE)
         run: |
           cmake -B build-core -G Ninja -DKP_BUILD_APP=OFF -DCMAKE_BUILD_TYPE=Release
@@ -38,16 +39,37 @@ jobs:
           key: ffmpeg-linux-${{ hashFiles('tools/build-ffmpeg.sh', 'cmake/FFmpeg.cmake') }}
       - name: The app, its tests and the renderer
         run: |
-          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DKP_FFMPEG_DIR=$HOME/kp-ffmpeg
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DKP_FFMPEG_DIR=$HOME/kp-ffmpeg
           cmake --build build --target KalibrePlayer KPAppTests KPRender
-      - name: App tests (formats, playback, tags, archives, jobs, window)
-        run: xvfb-run -a -s "-screen 0 1600x1000x24" ./build/KPAppTests_artefacts/Debug/KPAppTests
+      - name: App tests (formats, playback, tags, archives, jobs, window, platform)
+        run: xvfb-run -a -s "-screen 0 1600x1000x24" ./build/KPAppTests_artefacts/Release/KPAppTests
       - name: Render the window
-        run: xvfb-run -a -s "-screen 0 1600x1000x24" ./build/KPRender_artefacts/Debug/KPRender renders
+        run: xvfb-run -a -s "-screen 0 1600x1000x24" ./build/KPRender_artefacts/Release/KPRender renders
       - uses: actions/upload-artifact@v4
         with:
           name: window-renders
           path: renders/*.png
+      - name: Package
+        run: |
+          BIN="build/KalibrePlayer_artefacts/Release/Kalibre Player"
+          echo "What it needs from the system:"; ldd "$BIN"
+          mkdir -p "pkg/Kalibre Player/Add-on Examples"
+          cp "$BIN" "pkg/Kalibre Player/"
+          strip "pkg/Kalibre Player/Kalibre Player"
+          cp packaging/linux/install.sh packaging/linux/uninstall.sh packaging/linux/kalibre-player.desktop "pkg/Kalibre Player/"
+          cp Resources/Icon.png "pkg/Kalibre Player/kalibre-player.png"
+          cp docs/INSTALL-LINUX.txt "pkg/Kalibre Player/Read me first.txt"
+          cp Addons/*.lua "pkg/Kalibre Player/Add-on Examples/"
+          tar -C pkg -czf KalibrePlayer-Linux.tar.gz "Kalibre Player"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: KalibrePlayer-Linux
+          path: KalibrePlayer-Linux.tar.gz
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: KalibrePlayer-Linux.tar.gz
 
   macos:
     name: macOS app
@@ -103,3 +125,75 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: KalibrePlayer-macOS.dmg
+
+  windows:
+    name: Windows app
+    runs-on: windows-2022
+    env:
+      VCPKG_TAG: "2026.10.16"
+      KP_VCPKG: C:\kp-vcpkg
+      VCPKG_DEFAULT_BINARY_CACHE: C:\kp-vcpkg-cache
+    steps:
+      - uses: actions/checkout@v4
+      # Visual Studio's compiler in the shell, for Ninja. (It sets VCPKG_ROOT to its own vcpkg: ours is KP_VCPKG.)
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+      - name: Install Ninja
+        run: choco install ninja --no-progress -y
+      # FFmpeg (with LAME and libopus) and zlib from vcpkg at a fixed release (decision 0020);
+      # what vcpkg builds is kept between runs.
+      - uses: actions/cache/restore@v4
+        id: vcpkg-cache
+        with:
+          path: C:\kp-vcpkg-cache
+          key: vcpkg-${{ env.VCPKG_TAG }}-x64-windows-static-ffmpeg-lame-opus-zlib-v1
+      - name: FFmpeg, LAME, Opus and zlib
+        shell: pwsh
+        run: |
+          git clone --depth 1 --branch $env:VCPKG_TAG https://github.com/microsoft/vcpkg $env:KP_VCPKG
+          & "$env:KP_VCPKG\bootstrap-vcpkg.bat" -disableMetrics
+          New-Item -ItemType Directory -Force -Path $env:VCPKG_DEFAULT_BINARY_CACHE | Out-Null
+          & "$env:KP_VCPKG\vcpkg.exe" install "ffmpeg[core,avcodec,avformat,swresample,mp3lame,opus]:x64-windows-static" "zlib:x64-windows-static" --clean-after-build
+          if ($LASTEXITCODE -ne 0) { Get-ChildItem "$env:KP_VCPKG\buildtrees\ffmpeg\*.log" -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "== $_"; Get-Content $_ -Tail 60 }; exit 1 }
+      # Kept straight away, so a later step failing doesn't cost the next run the FFmpeg build.
+      - uses: actions/cache/save@v4
+        if: steps.vcpkg-cache.outputs.cache-hit != 'true'
+        with:
+          path: C:\kp-vcpkg-cache
+          key: vcpkg-${{ env.VCPKG_TAG }}-x64-windows-static-ffmpeg-lame-opus-zlib-v1
+      - name: Configure
+        run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_TOOLCHAIN_FILE=C:/kp-vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-static
+      - name: Build
+        # -k 0: on past a file that fails, so one run shows every error; then each error again, together.
+        shell: pwsh
+        run: |
+          cmake --build build --target KalibrePlayer KPTests KPAppTests -- -k 0 2>&1 | Tee-Object -FilePath build-log.txt
+          $failed = $LASTEXITCODE
+          if ($failed -ne 0) {
+            Write-Host "===== Every error ====="
+            Select-String -Path build-log.txt -Pattern 'error [A-Z]+[0-9]+|error LNK|FAILED:|fatal error' | ForEach-Object { $_.Line.Replace("$env:GITHUB_WORKSPACE\", "") }
+            exit $failed
+          }
+      - name: Core tests
+        run: .\build\KPTests.exe
+      - name: App tests
+        timeout-minutes: 20
+        run: .\build\KPAppTests_artefacts\Release\KPAppTests.exe
+      - name: Package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "pkg\Kalibre Player\Add-on Examples" | Out-Null
+          Copy-Item "build\KalibrePlayer_artefacts\Release\Kalibre Player.exe" "pkg\Kalibre Player\"
+          Copy-Item Addons\*.lua "pkg\Kalibre Player\Add-on Examples\"
+          Copy-Item docs\INSTALL-WINDOWS.txt "pkg\Kalibre Player\Read me first.txt"
+          Compress-Archive -Path "pkg\Kalibre Player" -DestinationPath KalibrePlayer-Windows.zip -Force
+      - uses: actions/upload-artifact@v4
+        with:
+          name: KalibrePlayer-Windows
+          path: KalibrePlayer-Windows.zip
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: KalibrePlayer-Windows.zip

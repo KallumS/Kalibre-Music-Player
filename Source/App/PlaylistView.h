@@ -2,7 +2,7 @@
     PlaylistView - the playlists as tabs, and the shown one's tracks in
     columns (decision 0007). Each column is a title-formatting pattern, so
     any can be added (right-click the header). Click a column's header to
-    sort by it; drag tracks to move them; drop files from the Finder in.
+    sort by it; drag tracks to move them; drop files from the Finder (or File Explorer) in.
     Double-click (or Return) plays.
 */
 

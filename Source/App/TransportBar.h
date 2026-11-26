@@ -30,7 +30,7 @@ private:
 class IconButton : public theme::HouseButton
 {
 public:
-    enum class Icon { previous, play, pause, stop, next };
+    enum class Icon { previous, play, pause, stop, next, expand, shrink };
     IconButton (Icon i, const juce::String& tip) : theme::HouseButton ({}, tip), icon (i) { setTitle (tip.upToFirstOccurrenceOf (" (", false, false)); }
     void setIcon (Icon i) { if (icon != i) { icon = i; repaint(); } }
     void paintButton (juce::Graphics&, bool over, bool down) override;
@@ -49,10 +49,10 @@ public:
 
 private:
     Context& ctx;
-    IconButton previous { IconButton::Icon::previous, "Previous (Command-Left)" };
+    IconButton previous { IconButton::Icon::previous, "Previous (" + ui::commandKey ("Left") + ")" };
     IconButton playPause { IconButton::Icon::play, "Play or pause (Space)" };
-    IconButton stop { IconButton::Icon::stop, "Stop (Command-.)" };
-    IconButton next { IconButton::Icon::next, "Next (Command-Right)" };
+    IconButton stop { IconButton::Icon::stop, "Stop (" + ui::commandKey (".") + ")" };
+    IconButton next { IconButton::Icon::next, "Next (" + ui::commandKey ("Right") + ")" };
     SeekBar seek;
     juce::Label played, left, title;
     juce::Slider volume { juce::Slider::LinearHorizontal, juce::Slider::NoTextBox };

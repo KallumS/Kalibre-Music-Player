@@ -148,6 +148,7 @@ private:
         auto rel = u8 (tf::formatPath (pattern.getText().toStdString(), ctx.c.track (l)));
         if (rel.isEmpty()) return from;
         if (op == FileOp::rename) rel = rel.replaceCharacter ('/', '_');
+        rel = rel.replaceCharacter ('/', File::getSeparatorChar());
         return (op == FileOp::rename ? from.getParentDirectory() : folder).getChildFile (rel + from.getFileExtension());
     }
 

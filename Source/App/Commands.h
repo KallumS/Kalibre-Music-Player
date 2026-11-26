@@ -28,6 +28,9 @@ enum : juce::CommandID
     editLayout, resetLayout, textBigger, textSmaller, keyboardShortcuts, addonManager, addonConsole, showJobs,
     // Help
     about, titleFormatHelp, queryHelp, addonsHelp,
+    // Added later go here, after the rest: kept shortcuts name commands by number.
+    miniPlayer,
+    last = miniPlayer
 };
 
 const juce::Array<juce::CommandID>& all();

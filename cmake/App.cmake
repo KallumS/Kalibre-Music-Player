@@ -50,6 +50,7 @@ foreach(opt ENABLE_OPENSSL ENABLE_MBEDTLS ENABLE_NETTLE ENABLE_LIBB2 ENABLE_LZ4 
             ENABLE_CPIO ENABLE_CAT ENABLE_UNZIP ENABLE_XATTR ENABLE_ACL ENABLE_TEST ENABLE_INSTALL)
     set(${opt} OFF CACHE BOOL "" FORCE)
 endforeach()
+set(POSIX_REGEX_LIB NONE CACHE STRING "" FORCE)   # patterns are for its own tools; Windows has no regex.h
 set(ENABLE_ZLIB ON CACHE BOOL "" FORCE)    # ZIP's deflate and gzip: the system's zlib
 set(ENABLE_ICONV ON CACHE BOOL "" FORCE)   # names in old ZIPs
 FetchContent_GetProperties(libarchive)
@@ -80,6 +81,7 @@ add_library(KPApp STATIC
     Source/Engine/FolderWatcher.cpp
     Source/Engine/Jobs.cpp
     Source/Engine/CdDrive.cpp
+    Source/Engine/CdRom.cpp
     Source/App/Theme.cpp
     Source/App/Settings.cpp
     Source/App/Controller.cpp
@@ -89,6 +91,7 @@ add_library(KPApp STATIC
     Source/App/LibraryView.cpp
     Source/App/Visualisers.cpp
     Source/App/TransportBar.cpp
+    Source/App/MiniPlayer.cpp
     Source/App/EqualizerView.cpp
     Source/App/LayoutView.cpp
     Source/App/Dialogs.cpp
@@ -101,6 +104,11 @@ if(APPLE)
     target_sources(KPApp PRIVATE Source/App/FilePanelsMac.mm Source/Engine/FolderWatcherMac.mm Source/App/MediaKeysMac.mm)
     target_link_libraries(KPApp PRIVATE "-framework CoreServices" "-framework MediaPlayer" "-framework AppKit")
     target_link_libraries(KPApp PUBLIC iconv)
+elseif(WIN32)
+    # Windows (decision 0020): folders watched by ReadDirectoryChangesW, media keys as hot keys.
+    target_sources(KPApp PRIVATE Source/App/FilePanelsOther.cpp Source/Engine/FolderWatcherWin.cpp Source/App/MediaKeysWin.cpp)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    target_sources(KPApp PRIVATE Source/App/FilePanelsOther.cpp Source/Engine/FolderWatcherLinux.cpp Source/App/MediaKeysOther.cpp)
 else()
     target_sources(KPApp PRIVATE Source/App/FilePanelsOther.cpp Source/Engine/FolderWatcherOther.cpp Source/App/MediaKeysOther.cpp)
 endif()
@@ -121,7 +129,9 @@ target_link_libraries(KPApp
 
 target_compile_definitions(KPApp PUBLIC
     JUCE_WEB_BROWSER=0
-    JUCE_USE_CURL=0
+    # Linux reaches MusicBrainz through libcurl, loaded when it's first needed (so it isn't needed to start).
+    JUCE_USE_CURL=$<IF:$<PLATFORM_ID:Linux>,1,0>
+    JUCE_LOAD_CURL_SYMBOLS_LAZILY=1
     JUCE_DISPLAY_SPLASH_SCREEN=0
     JUCE_REPORT_APP_USAGE=0
     JUCE_STRICT_REFCOUNTEDPOINTER=1
@@ -162,7 +172,7 @@ target_link_libraries(KalibrePlayer PRIVATE
 if(KP_BUILD_TESTS)
     juce_add_console_app(KPAppTests PRODUCT_NAME "Kalibre Player App Tests")
     target_sources(KPAppTests PRIVATE Tests/App/TestAppMain.cpp Tests/App/TestFormats.cpp Tests/App/TestPlayer.cpp
-                                      Tests/App/TestArchives.cpp Tests/App/TestTags.cpp Tests/App/TestJobs.cpp Tests/App/TestWindow.cpp)
+                                      Tests/App/TestArchives.cpp Tests/App/TestTags.cpp Tests/App/TestJobs.cpp Tests/App/TestWindow.cpp Tests/App/TestPlatform.cpp)
     target_include_directories(KPAppTests PRIVATE Tests)
     target_compile_definitions(KPAppTests PRIVATE JUCE_STANDALONE_APPLICATION=1 KP_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
     target_link_libraries(KPAppTests PRIVATE KPApp juce::juce_recommended_config_flags)

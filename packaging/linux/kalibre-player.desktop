@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Kalibre Player
+GenericName=Music Player
+Comment=Play, organise, tag and convert your music
+Exec=kalibre-player %F
+Icon=kalibre-player
+Terminal=false
+Categories=AudioVideo;Audio;Player;
+MimeType=audio/mpeg;audio/mp4;audio/aac;audio/x-m4a;audio/flac;audio/x-flac;audio/ogg;audio/x-vorbis+ogg;audio/opus;audio/x-opus+ogg;audio/x-wav;audio/wav;audio/x-aiff;audio/aiff;audio/basic;audio/x-ms-wma;audio/x-musepack;audio/x-wavpack;audio/x-speex;audio/x-ape;audio/x-mpegurl;audio/x-scpls;
+StartupWMClass=Kalibre Player

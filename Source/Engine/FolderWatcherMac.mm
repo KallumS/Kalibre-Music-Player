@@ -2,6 +2,8 @@
 #include "FolderWatcher.h"
 
 #include <CoreServices/CoreServices.h>
+#include <climits>
+#include <cstdlib>
 
 namespace kp
 {
@@ -11,6 +13,7 @@ struct FolderWatcher::Impl
 {
     FolderWatcher& owner;
     juce::StringArray folders;
+    juce::StringArray real;   // each folder as the system names it: FSEvents reports /private/var for /var, a link's target for a link
     FSEventStreamRef stream = nullptr;
     dispatch_queue_t queue = dispatch_queue_create ("com.kallumshah.kalibreplayer.watch", DISPATCH_QUEUE_SERIAL);
     std::shared_ptr<bool> alive = std::make_shared<bool> (true);
@@ -37,7 +40,10 @@ struct FolderWatcher::Impl
         juce::MessageManager::callAsync ([self, alive, changed]
         {
             if (! *alive || ! self->owner.onChange) return;
-            auto which = foldersHolding (self->folders, changed);
+            juce::StringArray which;
+            for (int k = 0; k < self->folders.size(); ++k)
+                if (! foldersHolding ({ self->real[k] }, changed).isEmpty() || ! foldersHolding ({ self->folders[k] }, changed).isEmpty())
+                    which.add (self->folders[k]);
             if (! which.isEmpty()) self->owner.onChange (which);
         });
     }
@@ -46,6 +52,12 @@ struct FolderWatcher::Impl
     {
         stop();
         if (folders.isEmpty()) return;
+        real.clear();
+        for (auto& f : folders)
+        {
+            char resolved[PATH_MAX];
+            real.add (::realpath (f.toRawUTF8(), resolved) != nullptr ? juce::String::fromUTF8 (resolved) : f);
+        }
         CFMutableArrayRef paths = CFArrayCreateMutable (nullptr, 0, &kCFTypeArrayCallBacks);
         for (auto& f : folders)
         {

@@ -1,10 +1,22 @@
-# FFmpeg (LGPL-2.1), built small and static by tools/build-ffmpeg.sh
+# FFmpeg (LGPL-2.1). On Windows, vcpkg's (decision 0020): pass vcpkg's
+# toolchain file, with ffmpeg[core,avcodec,avformat,swresample,mp3lame,opus]
+# and zlib installed for x64-windows-static (the CI does).
+if(WIN32)
+    find_package(FFMPEG REQUIRED)
+    add_library(KPFFmpeg INTERFACE)
+    target_include_directories(KPFFmpeg INTERFACE ${FFMPEG_INCLUDE_DIRS})
+    target_link_directories(KPFFmpeg INTERFACE ${FFMPEG_LIBRARY_DIRS})
+    target_link_libraries(KPFFmpeg INTERFACE ${FFMPEG_LIBRARIES})
+    return()
+endif()
+
+# Elsewhere, built small and static by tools/build-ffmpeg.sh
 # (decision 0003): every format's decoder, the converter's encoders, and
 # libswresample. Built once when configuring, into KP_FFMPEG_DIR (by default
 # inside the build folder); pass -DKP_FFMPEG_DIR=... to use one built before
 # (CI keeps one between runs).
 
-set(KP_FFMPEG_VERSION "n8.0.3")
+set(KP_FFMPEG_VERSION "n9.0.2")
 set(KP_FFMPEG_BUILD "${KP_FFMPEG_VERSION}+lame+opus")   # what tools/build-ffmpeg.sh writes in VERSION
 set(KP_FFMPEG_DIR "${CMAKE_BINARY_DIR}/ffmpeg" CACHE PATH "Where FFmpeg is (or is built)")
 

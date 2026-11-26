@@ -22,6 +22,25 @@ void IconButton::paintButton (Graphics& g, bool over, bool down)
         case Icon::stop: p.addRectangle (r.reduced (1.5f)); break;
         case Icon::previous: p.addRectangle (r.getX(), r.getY(), 2.5f, r.getHeight()); triangle (r.withTrimmedLeft (3.0f).removeFromLeft (5.5f), false);
                              triangle (r.withTrimmedLeft (8.5f), false); break;
+        case Icon::expand:
+        case Icon::shrink:
+        {
+            // A window's outline, with an arrow out of its corner (expand) or into it (shrink).
+            auto box = r.reduced (0.5f);
+            p.addRectangle (box.getX(), box.getY(), box.getWidth(), 1.6f);
+            p.addRectangle (box.getX(), box.getBottom() - 1.6f, box.getWidth(), 1.6f);
+            p.addRectangle (box.getX(), box.getY(), 1.6f, box.getHeight());
+            p.addRectangle (box.getRight() - 1.6f, box.getY(), 1.6f, box.getHeight());
+            auto inner = box.reduced (3.5f);
+            if (icon == Icon::expand) p.addTriangle (inner.getRight(), inner.getY(), inner.getRight(), inner.getY() + 5.0f, inner.getRight() - 5.0f, inner.getY());
+            else p.addTriangle (inner.getX(), inner.getBottom(), inner.getX(), inner.getBottom() - 5.0f, inner.getX() + 5.0f, inner.getBottom());
+            Path line;
+            line.startNewSubPath (inner.getX(), inner.getBottom());
+            line.lineTo (inner.getRight(), inner.getY());
+            PathStrokeType (1.6f).createStrokedPath (line, line);
+            p.addPath (line);
+            break;
+        }
         case Icon::next: p.addRectangle (r.getRight() - 2.5f, r.getY(), 2.5f, r.getHeight()); triangle (r.withTrimmedRight (3.0f).removeFromRight (5.5f), true);
                          triangle (r.withTrimmedRight (8.5f), true); break;
     }
@@ -78,7 +97,7 @@ TransportBar::TransportBar (Context& x) : ctx (x), seek (x.c)
     volume.setRange (-60.0, 0.0, 0.5);
     volume.setSkewFactorFromMidPoint (-12.0);
     volume.setValue (ctx.c.volume(), dontSendNotification);
-    volume.setTooltip ("Volume (Command-Up, Command-Down)");
+    volume.setTooltip ("Volume (" + ui::commandKey ("Up") + ", " + ui::commandKey ("Down") + ")");
     volume.onValueChange = [this] { ctx.c.setVolume (volume.getValue()); };
     volume.setDoubleClickReturnValue (true, 0.0);
     addAndMakeVisible (volume);

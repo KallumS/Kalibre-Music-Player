@@ -67,7 +67,7 @@ void MessageLine::resized()
 void MessageLine::mouseDown (const MouseEvent&) { c.say ({}); }   // dismissed with a click
 
 //==============================================================================
-MainComponent::MainComponent (Controller& x) : ctx { x, commands }, c (x), messageLine (x), view (ctx)
+MainComponent::MainComponent (Controller& x) : ctx { x, commands }, c (x), messageLine (x), view (ctx), mini (ctx)
 {
     ui::setHost (this);
     commands.registerAllCommandsForTarget (this);
@@ -81,6 +81,9 @@ MainComponent::MainComponent (Controller& x) : ctx { x, commands }, c (x), messa
    #endif
     addAndMakeVisible (messageLine);
     addAndMakeVisible (view);
+    addChildComponent (mini);
+    mini.onExpand = [this] { setMini (false); };
+    mini.onKeepInFront = [this] (bool on) { if (onKeepInFront) onKeepInFront (on); };
     auto saved = layout::fromJson (c.settings.get ("layout").toStdString());
     view.setLayout (saved ? *saved : layout::presets().front().root);
     view.onChanged = [this] { saveLayout(); };
@@ -102,8 +105,23 @@ void MainComponent::saveLayout() { c.settings.set ("layout", u8 (layout::toJson 
 
 void MainComponent::paint (Graphics& g) { g.fillAll (theme::ground); }
 
+void MainComponent::setMini (bool on)
+{
+    if (on == miniMode) return;
+    miniMode = on;
+    if (menuBar) menuBar->setVisible (! on);
+    messageLine.setVisible (! on);
+    view.setVisible (! on);
+    mini.setVisible (on);
+    c.settings.set ("mini", on);
+    if (onMiniChanged) onMiniChanged (on);
+    resized();
+    commands.commandStatusChanged();
+}
+
 void MainComponent::resized()
 {
+    if (miniMode) { mini.setBounds (getLocalBounds()); return; }
     auto r = getLocalBounds();
     if (menuBar) menuBar->setBounds (r.removeFromTop (LookAndFeel::getDefaultLookAndFeel().getDefaultMenuBarHeight()));
     messageLine.setBounds (r.removeFromTop (theme::px (28)));
@@ -263,6 +281,8 @@ PopupMenu MainComponent::getMenuForIndex (int index, const String&)
         }
         case 3:
         {
+            m.addCommandItem (cm, cmd::miniPlayer);
+            m.addSeparator();
             m.addCommandItem (cm, cmd::editLayout);
             PopupMenu presets;
             for (auto& p : layout::presets())
@@ -339,7 +359,8 @@ void MainComponent::getCommandInfo (CommandID id, ApplicationCommandInfo& info)
         case cmd::rgOff: case cmd::rgTrackMode: case cmd::rgAlbumMode: case cmd::rgSmartMode:
             info.setTicked ((int) c.replayGain.mode == (int) (id - cmd::rgOff)); break;
         case cmd::equalizerOn: info.setTicked (c.player.eq.enabled.load()); break;
-        case cmd::editLayout: info.setTicked (view.editing()); break;
+        case cmd::editLayout: info.setTicked (view.editing()); info.setActive (! miniMode); break;
+        case cmd::miniPlayer: info.setTicked (miniMode); break;
         case cmd::playPause: info.shortName = c.playing() && ! c.paused() ? "Pause" : "Play"; break;
         default: break;
     }
@@ -408,9 +429,7 @@ bool MainComponent::perform (const InvocationInfo& info)
             if (discs.empty()) { c.say ("There's no audio CD in the drive.", true); return true; }
             if (info.commandID == cmd::ripCd) { dialogs::rip (ctx, discs.front()); return true; }
             const int p = c.newPlaylist (discs.front().name());
-            std::vector<std::string> locs;
-            for (auto& f : discs.front().tracks) locs.push_back (f.getFullPathName().toStdString());
-            c.addLocations (p, locs);
+            c.addLocations (p, discs.front().tracks);
             c.playItem (p, 0);
             return true;
         }
@@ -506,9 +525,10 @@ bool MainComponent::perform (const InvocationInfo& info)
 
         case cmd::editLayout:
             view.setEditing (! view.editing());
-            c.say (view.editing() ? "Editing the layout: click Change on any panel. Command-E again when it's done." : String ("The layout is kept."));
+            c.say (view.editing() ? "Editing the layout: click Change on any panel. " + ui::commandKey ("E") + " again when it's done." : String ("The layout is kept."));
             commands.commandStatusChanged();
             return true;
+        case cmd::miniPlayer: setMini (! miniMode); return true;
         case cmd::resetLayout: view.setLayout (layout::presets().front().root); saveLayout(); return true;
         case cmd::textBigger: case cmd::textSmaller:
         {

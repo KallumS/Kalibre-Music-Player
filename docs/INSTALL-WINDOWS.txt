@@ -1,0 +1,24 @@
+Kalibre Player for Windows (64-bit, Windows 10 and 11)
+======================================================
+
+1. Unzip KalibrePlayer-Windows.zip wherever you like (Documents, or
+   C:\Program Files if you're an administrator). Nothing else needs
+   installing: everything is inside Kalibre Player.exe.
+2. Double-click Kalibre Player.exe. The first time, Windows may say it
+   protected your PC (the player isn't signed yet): click More info, then
+   Run anyway.
+3. Add your music: click Add a Folder in the library on the left. The
+   library watches that folder from then on.
+4. Double-click a track to play it. Space plays and pauses; the keyboard's
+   media keys work too, even when the player isn't in front.
+
+The keys are Ctrl where the Mac's are Command (Ctrl+O opens, Ctrl+Shift+M
+is the mini player). The output device, ReplayGain and crossfade are in
+File > Preferences; so are your VST3 effects (Plug-ins: scan, then Add).
+Audio CDs: File > Play Audio CD, or Rip Audio CD.
+
+Add-ons: the "Add-on Examples" folder beside the player has four. File >
+Import Add-on adds one; they appear in the Add-ons menu.
+
+Your library, playlists and settings are kept in
+%APPDATA%\Kalibre Player.

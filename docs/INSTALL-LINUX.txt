@@ -1,0 +1,24 @@
+Kalibre Player for Linux (64-bit Intel/AMD)
+===========================================
+
+1. Unpack it:   tar -xzf KalibrePlayer-Linux.tar.gz
+2. Install it for yourself (no administrator needed):
+                ./Kalibre\ Player/install.sh
+   It's then in your applications menu, and "kalibre-player" starts it.
+   (Or run "Kalibre Player" straight from the folder, without installing.)
+3. Add your music: click Add a Folder in the library on the left. The
+   library watches that folder from then on.
+4. Double-click a track to play it. Space plays and pauses.
+
+It needs a recent distribution (Ubuntu 24.04, Fedora 40, Debian 13 or
+newer) with ALSA, which PipeWire and PulseAudio both provide. Looking CDs up
+on MusicBrainz uses libcurl, which nearly every system has. To read audio
+CDs you need to be in the "cdrom" group on some systems
+(sudo usermod -aG cdrom $USER, then log in again).
+
+The keys are Ctrl where the Mac's are Command. The output device,
+ReplayGain and crossfade are in File > Preferences; so are VST3 effects.
+The keyboard's media keys aren't caught yet on Linux.
+
+Your library, playlists and settings are kept in ~/.config/Kalibre Player.
+./uninstall.sh takes the player out (and leaves those).
