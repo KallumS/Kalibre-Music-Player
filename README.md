@@ -7,6 +7,11 @@ laid out as you like.
 
 ![The window: the library, the playlist, the cover and the meters](docs/guide/library-and-playlist.png)
 
+Its icon is Kalibre's K, on a bluer tile, with level bars where Kalibre has
+a scale:
+
+<img src="Resources/Icon.png" width="128" alt="Kalibre Player's icon">
+
 ## What's in it
 
 **Playback**
@@ -56,6 +61,8 @@ laid out as you like.
 
 ![Editing the layout](docs/guide/editing-the-layout.png)
 
+![The mini player](docs/guide/mini-player.png)
+
 ## Getting it
 
 From [Actions](../../actions) > Build > the latest run, or a release:
@@ -79,11 +86,12 @@ The first build also builds FFmpeg, LAME and libopus (a few minutes, once).
 
 ## The docs
 
-- [docs/USER-GUIDE.md](docs/USER-GUIDE.md): every function, menu and key.
+- **[docs/USER-GUIDE.md](docs/USER-GUIDE.md): the guide**: installing, every function, menu and key, and what to do when something's wrong.
 - [docs/FEATURES.md](docs/FEATURES.md): what's done and what isn't.
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): how it's built.
 - [docs/TITLE-FORMATTING.md](docs/TITLE-FORMATTING.md), [docs/QUERIES.md](docs/QUERIES.md), [docs/ADD-ONS.md](docs/ADD-ONS.md).
 - [docs/decisions/](docs/decisions/): why it's built so.
+- [docs/sessions/](docs/sessions/): what was asked and done, session by session.
 - [docs/CHANGES.md](docs/CHANGES.md): each version.
 
 ## Licence

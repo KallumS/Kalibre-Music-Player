@@ -381,6 +381,7 @@ public:
         addTab ("Appearance", theme::ground, new AppearancePage (ctx), true);
         setCurrentTabIndex (jlimit (0, 4, tab));
     }
+    void paint (Graphics& g) override { g.fillAll (theme::ground); }   // behind the tabs, not the window's own
 };
 } // namespace
 

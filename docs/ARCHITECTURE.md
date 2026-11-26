@@ -52,6 +52,24 @@ file / archive entry ──► Sources::open ──► Decoder (FFmpeg + swresam
 - Everything the player writes (library, playlists, settings) goes through a
   temporary file, so a crash mid-write loses nothing.
 
+## Each system (decision 0020)
+
+| | Mac | Windows | Linux |
+|---|---|---|---|
+| FFmpeg 9.0.2 | `tools/build-ffmpeg.sh` | vcpkg, pinned in the workflow | `tools/build-ffmpeg.sh` |
+| Folder watching | FSEvents, real paths (`FolderWatcherMac.mm`) | ReadDirectoryChangesW (`FolderWatcherWin.cpp`) | inotify, a watch per folder (`FolderWatcherLinux.cpp`) |
+| Audio CDs | the AIFF files macOS shows (`CdDrive.cpp`) | the drive's TOC and raw sectors (`CdRom.cpp`) | the same, by ioctl |
+| Media keys | MPRemoteCommandCenter (`MediaKeysMac.mm`) | hot keys (`MediaKeysWin.cpp`) | not yet |
+| Package | .dmg | .zip | .tar.gz with install.sh |
+
+A CD track on Windows and Linux is "cdda:" + the drive + "|" + its number,
+opened as a WAV stream made from its sectors (decision 0019), so playing and
+ripping go the same way as files.
+
+The **mini player** (decision 0018) is the main window made small: the
+panels hidden, `MiniPlayer` shown, the window without its title bar
+(`Main.cpp`), its full size and place kept to go back to.
+
 ## Formats
 
 FFmpeg is built small and static by `tools/build-ffmpeg.sh`: only audio
