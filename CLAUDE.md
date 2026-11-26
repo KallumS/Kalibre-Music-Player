@@ -15,6 +15,15 @@ KalibrePlayer-macOS); Windows' `.zip` and Linux's `.tar.gz` come from the same r
 - [`docs/USER-GUIDE.md`](docs/USER-GUIDE.md): for the musician: every function, menu and key, with pictures (`docs/guide/`, from KPRender).
 - [`docs/ADD-ONS.md`](docs/ADD-ONS.md), [`docs/TITLE-FORMATTING.md`](docs/TITLE-FORMATTING.md), [`docs/QUERIES.md`](docs/QUERIES.md): made from the Help menu's words (`Source/App/Dialogs.cpp`); change both.
 - [`docs/CHANGES.md`](docs/CHANGES.md): what changed in each version.
+- [`docs/sessions/`](docs/sessions/README.md): one record per working session: what the musician asked, in their words, what was done, and where it was left. **Read the last one first.**
+
+## Where it was left
+
+0.3.1 on branch `claude/sleepy-pasteur-y7ag9n`, green on all three systems;
+`main` has 0.1.1 (pull request #1): a new pull request brings the rest. What
+needs trying by hand, and what isn't done, is in `docs/FEATURES.md` and the
+last session's record. At the end of a session, add its record to
+`docs/sessions/`.
 
 ## Working in it
 
